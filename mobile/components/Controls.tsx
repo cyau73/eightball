@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Platform } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Volume2, VolumeX, History, Settings, Sparkles, Flame, Zap } from 'lucide-react-native';
 import { SassIntensity } from '../types';
 
@@ -30,29 +30,28 @@ export const Controls: React.FC<ControlsProps> = ({
     icon: React.ReactNode;
     color: string;
   }> = [
-    {
-      id: 'MILD',
-      label: 'Mild',
-      icon: <Sparkles size={14} color={intensity === 'MILD' ? '#38bdf8' : '#64748b'} />,
-      color: '#38bdf8',
-    },
-    {
-      id: 'SPICY',
-      label: 'Spicy',
-      icon: <Flame size={14} color={intensity === 'SPICY' ? '#ec4899' : '#64748b'} />,
-      color: '#ec4899',
-    },
-    {
-      id: 'SAVAGE',
-      label: 'Savage',
-      icon: <Zap size={14} color={intensity === 'SAVAGE' ? '#f43f5e' : '#64748b'} />,
-      color: '#f43f5e',
-    },
-  ];
+      {
+        id: 'MILD',
+        label: 'Mild',
+        icon: <Sparkles size={16} color={intensity === 'MILD' ? '#38bdf8' : '#64748b'} />,
+        color: '#38bdf8',
+      },
+      {
+        id: 'SPICY',
+        label: 'Spicy',
+        icon: <Flame size={16} color={intensity === 'SPICY' ? '#ec4899' : '#64748b'} />,
+        color: '#ec4899',
+      },
+      {
+        id: 'SAVAGE',
+        label: 'Savage',
+        icon: <Zap size={16} color={intensity === 'SAVAGE' ? '#f43f5e' : '#64748b'} />,
+        color: '#f43f5e',
+      },
+    ];
 
   return (
     <View style={styles.container}>
-      {/* Intensity Selector Segmented Bar */}
       <View style={styles.intensityContainer}>
         <Text style={styles.sectionLabel}>SASS LEVEL</Text>
         <View style={styles.segmentedBar}>
@@ -86,7 +85,6 @@ export const Controls: React.FC<ControlsProps> = ({
         </View>
       </View>
 
-      {/* Shake / Spin Main Trigger Button */}
       <TouchableOpacity
         style={[styles.shakeButton, isLoading && styles.shakeButtonDisabled]}
         onPress={onSimulateShake}
@@ -98,24 +96,23 @@ export const Controls: React.FC<ControlsProps> = ({
         </Text>
       </TouchableOpacity>
 
-      {/* Secondary Action Toolbar */}
       <View style={styles.toolbar}>
         <TouchableOpacity style={styles.toolButton} onPress={onOpenHistory} activeOpacity={0.7}>
-          <History size={18} color="#94a3b8" />
+          <History size={20} color="#94a3b8" />
           <Text style={styles.toolText}>History</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.toolButton} onPress={onToggleSound} activeOpacity={0.7}>
           {soundEnabled ? (
-            <Volume2 size={18} color="#94a3b8" />
+            <Volume2 size={20} color="#94a3b8" />
           ) : (
-            <VolumeX size={18} color="#64748b" />
+            <VolumeX size={20} color="#64748b" />
           )}
           <Text style={styles.toolText}>{soundEnabled ? 'Sound ON' : 'Muted'}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.toolButton} onPress={onOpenSettings} activeOpacity={0.7}>
-          <Settings size={18} color="#94a3b8" />
+          <Settings size={20} color="#94a3b8" />
           <Text style={styles.toolText}>Settings</Text>
         </TouchableOpacity>
       </View>
@@ -126,20 +123,20 @@ export const Controls: React.FC<ControlsProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    maxWidth: 400,
+    maxWidth: 420,
     paddingHorizontal: 20,
     alignItems: 'center',
-    gap: 16,
+    gap: 18,
   },
   intensityContainer: {
     width: '100%',
     alignItems: 'center',
   },
   sectionLabel: {
-    fontSize: 11,
+    fontSize: 14.5,
     fontWeight: '800',
     letterSpacing: 1.2,
-    color: '#64748b',
+    color: '#94a3b8',
     marginBottom: 8,
   },
   segmentedBar: {
@@ -157,35 +154,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderRadius: 10,
     gap: 6,
     borderWidth: 1,
     borderColor: 'transparent',
   },
   segmentText: {
-    fontSize: 13,
+    fontSize: 15.5,
     fontWeight: '600',
   },
   shakeButton: {
     width: '100%',
-    backgroundColor: 'rgba(236, 72, 153, 0.15)',
+    backgroundColor: 'rgba(236, 72, 153, 0.18)',
     borderWidth: 1.5,
     borderColor: '#ec4899',
-    paddingVertical: 14,
+    paddingVertical: 16,
     borderRadius: 16,
     alignItems: 'center',
-    shadowColor: '#ec4899',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
   },
   shakeButtonDisabled: {
     opacity: 0.6,
   },
   shakeButtonText: {
-    color: '#fdf2f8',
-    fontSize: 14,
+    color: '#ffffff',
+    fontSize: 17,
     fontWeight: '800',
     letterSpacing: 0.8,
   },
@@ -198,15 +191,15 @@ const styles = StyleSheet.create({
   toolButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
     borderRadius: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
   },
   toolText: {
-    fontSize: 12,
-    color: '#94a3b8',
+    fontSize: 15.5,
+    color: '#cbd5e1',
     fontWeight: '600',
   },
 });

@@ -2,29 +2,29 @@ import React, { useRef, useEffect } from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   Animated,
   PanResponder,
-  TouchableOpacity,
   Dimensions,
-  Platform,
+  Easing,
 } from 'react-native';
 import { TriangleDie } from './TriangleDie';
 import { SassIntensity } from '../types';
 
 interface EightBallProps {
   fortuneText: string;
+  fortuneIntensity?: SassIntensity; // Actual drawn fortune's intensity
   isRevealing: boolean;
-  intensity: SassIntensity;
+  intensity: SassIntensity;        // User's selected filter setting
   isShaking: boolean;
   onSpinTrigger: () => void;
 }
 
-const BALL_SIZE = Math.min(Dimensions.get('window').width * 0.85, 340);
-const PORTAL_SIZE = BALL_SIZE * 0.58;
+const BALL_SIZE = Math.min(Dimensions.get('window').width * 0.92, 440);
+const PORTAL_SIZE = BALL_SIZE * 0.68;
 
 export const EightBall: React.FC<EightBallProps> = ({
   fortuneText,
+  fortuneIntensity,
   isRevealing,
   intensity,
   isShaking,
@@ -39,9 +39,21 @@ export const EightBall: React.FC<EightBallProps> = ({
 
   // Touch spin tracking
   const currentAngle = useRef<number>(0);
-  spinAngle.addListener(({ value }) => {
-    currentAngle.current = value;
-  });
+
+  useEffect(() => {
+    const listenerId = spinAngle.addListener(({ value }) => {
+      currentAngle.current = value;
+    });
+    return () => spinAngle.removeListener(listenerId);
+  }, [spinAngle]);
+
+  const resetPhysics = () => {
+    Animated.parallel([
+      Animated.spring(scaleAnim, { toValue: 1, friction: 6, useNativeDriver: false }),
+      Animated.spring(tiltX, { toValue: 0, friction: 6, useNativeDriver: false }),
+      Animated.spring(tiltY, { toValue: 0, friction: 6, useNativeDriver: false }),
+    ]).start();
+  };
 
   const panResponder = useRef(
     PanResponder.create({
@@ -60,30 +72,43 @@ export const EightBall: React.FC<EightBallProps> = ({
         tiltX.setValue(gestureState.dy * 0.05);
         tiltY.setValue(gestureState.dx * 0.05);
       },
+      onPanResponderTerminate: () => {
+        resetPhysics();
+      },
       onPanResponderRelease: (_, gestureState) => {
         const dragDistance = Math.hypot(gestureState.dx, gestureState.dy);
         const velocity = Math.hypot(gestureState.vx, gestureState.vy);
 
-        // Reset scale & tilt
-        Animated.parallel([
-          Animated.spring(scaleAnim, {
-            toValue: 1,
-            friction: 6,
-            useNativeDriver: false,
-          }),
-          Animated.spring(tiltX, { toValue: 0, friction: 6, useNativeDriver: false }),
-          Animated.spring(tiltY, { toValue: 0, friction: 6, useNativeDriver: false }),
-        ]).start();
+        resetPhysics();
 
-        // If spun or dragged with enough energy
         if (dragDistance > 30 || velocity > 0.4) {
-          const spinDelta = (gestureState.dx > 0 ? 1 : -1) * (velocity * 360 + 180);
-          
+          // 1. Calculate new target angle from the swipe direction
+          const direction = gestureState.dx > 0 ? 1 : -1;
+          const spinAmount = direction * (velocity * 180 + 120);
+          const targetAngle = currentAngle.current + spinAmount;
+
+          // 2. Perform initial active spin
           Animated.timing(spinAngle, {
-            toValue: currentAngle.current + spinDelta,
-            duration: 1000,
+            toValue: targetAngle,
+            duration: 600,
             useNativeDriver: false,
-          }).start();
+          }).start(() => {
+            // 3. Normalize angle to [-180, 180] so it takes the shortest route home
+            let normalizedAngle = targetAngle % 360;
+            if (normalizedAngle > 180) normalizedAngle -= 360;
+            if (normalizedAngle < -180) normalizedAngle += 360;
+
+            // Instantly set value to normalized range without visual jump
+            spinAngle.setValue(normalizedAngle);
+
+            // 4. Smoothly float back upright (0deg) over 5 seconds via the shortest path with easing
+            Animated.timing(spinAngle, {
+              toValue: 0,
+              duration: 5000,
+              easing: Easing.out(Easing.quad),
+              useNativeDriver: false,
+            }).start();
+          });
 
           onSpinTrigger();
         }
@@ -108,8 +133,18 @@ export const EightBall: React.FC<EightBallProps> = ({
   }, [isShaking, shakeOffset]);
 
   const spinRotation = spinAngle.interpolate({
-    inputRange: [0, 360],
-    outputRange: ['0deg', '360deg'],
+    inputRange: [-360, 360],
+    outputRange: ['-360deg', '360deg'],
+  });
+
+  const rotateX = tiltX.interpolate({
+    inputRange: [-15, 15],
+    outputRange: ['-15deg', '15deg'],
+  });
+
+  const rotateY = tiltY.interpolate({
+    inputRange: [-15, 15],
+    outputRange: ['-15deg', '15deg'],
   });
 
   return (
@@ -117,7 +152,7 @@ export const EightBall: React.FC<EightBallProps> = ({
       {/* Dynamic 3D Spherical Floor Shadow */}
       <View style={styles.floorShadow} />
 
-      {/* Main 8-Ball Sphere */}
+      {/* Main Outer 8-Ball Sphere */}
       <Animated.View
         {...panResponder.panHandlers}
         style={[
@@ -127,31 +162,39 @@ export const EightBall: React.FC<EightBallProps> = ({
               { translateX: shakeOffset.x },
               { translateY: shakeOffset.y },
               { scale: scaleAnim },
-              { rotate: spinRotation },
             ],
           },
         ]}
       >
-        {/* Curved Specular Gloss Highlight */}
-        <View style={styles.specularHighlight} />
-        <View style={styles.specularSecondary} />
-
         {/* Center Portal: Mystical Liquid Window */}
         <View style={styles.liquidPortal}>
-          {/* Deep Liquid Murk & Fluid Bubble Rings */}
+          {/* Deep Liquid Murk */}
           <View style={styles.liquidFluidInner}>
-            <View style={styles.bubbleOrb1} />
-            <View style={styles.bubbleOrb2} />
-            
-            {/* The Floating Sassy Triangle Die */}
-            <TriangleDie
-              text={fortuneText}
-              isRevealing={isRevealing}
-              intensity={intensity}
-            />
+            <View style={styles.bubbleOrb1} pointerEvents="none" />
+            <View style={styles.bubbleOrb2} pointerEvents="none" />
 
-            {/* Gloss Reflection overlay on glass window */}
-            <View style={styles.portalGlassGloss} />
+            {/* Inner Floating Die Container that reacts to spin & 3D tilt */}
+            <Animated.View
+              style={[
+                styles.dieContainer,
+                {
+                  transform: [
+                    { rotate: spinRotation },
+                    { rotateX: rotateX },
+                    { rotateY: rotateY },
+                  ],
+                },
+              ]}
+            >
+              <TriangleDie
+                text={fortuneText}
+                isRevealing={isRevealing}
+                intensity={fortuneIntensity || intensity} // Prefers fortune's true level
+              />
+            </Animated.View>
+
+            {/* Glass Reflection overlay on glass window */}
+            <View style={styles.portalGlassGloss} pointerEvents="none" />
           </View>
         </View>
       </Animated.View>
@@ -190,26 +233,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
   },
-  specularHighlight: {
-    position: 'absolute',
-    top: 16,
-    left: 36,
-    width: BALL_SIZE * 0.45,
-    height: BALL_SIZE * 0.22,
-    borderRadius: 999,
-    backgroundColor: 'rgba(255, 255, 255, 0.14)',
-    transform: [{ rotate: '-35deg' }],
-  },
-  specularSecondary: {
-    position: 'absolute',
-    top: 26,
-    left: 48,
-    width: BALL_SIZE * 0.22,
-    height: BALL_SIZE * 0.1,
-    borderRadius: 999,
-    backgroundColor: 'rgba(255, 255, 255, 0.28)',
-    transform: [{ rotate: '-35deg' }],
-  },
   liquidPortal: {
     width: PORTAL_SIZE,
     height: PORTAL_SIZE,
@@ -217,7 +240,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#030712',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 7,
+    borderWidth: 8,
     borderColor: '#111827',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
@@ -234,22 +257,28 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     position: 'relative',
   },
+  dieContainer: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   bubbleOrb1: {
     position: 'absolute',
-    top: 15,
-    right: 25,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    top: 20,
+    right: 30,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
     backgroundColor: 'rgba(56, 189, 248, 0.12)',
   },
   bubbleOrb2: {
     position: 'absolute',
-    bottom: 20,
-    left: 30,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
+    bottom: 24,
+    left: 36,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
     backgroundColor: 'rgba(139, 92, 246, 0.15)',
   },
   portalGlassGloss: {
@@ -261,5 +290,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderTopLeftRadius: PORTAL_SIZE / 2,
     borderTopRightRadius: PORTAL_SIZE / 2,
+    zIndex: 5,
   },
 });

@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FortuneResult, SassIntensity } from '../types';
 
 const API_BASE_URL_KEY = '@sassy_8ball_api_url';
-export const DEFAULT_API_URL = 'http://localhost:3002';
+export const DEFAULT_API_URL = 'http://mac-mini.tail0f16ec.ts.net:3002';
 
 // Offline fallback fortunes
 const OFFLINE_FORTUNES: Record<SassIntensity, string[]> = {
