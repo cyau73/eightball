@@ -3,6 +3,7 @@
     "name": "Sassy 8-Ball",
     "slug": "sassy-eightball",
     "version": "1.0.0",
+    "newArchEnabled": true,
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -11,12 +12,31 @@
       "resizeMode": "contain",
       "backgroundColor": "#0a0b10"
     },
+    "plugins": [
+      "expo-router",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-3940256099942544~3347511713",
+          "iosAppId": "ca-app-pub-3940256099942544~1458002511"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "newArchEnabled": true
+          }
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sassy.eightball",
       "infoPlist": {
         "UIBackgroundModes": [],
-        "NSMotionUsageDescription": "We use the accelerometer to detect when you shake the 8-ball to reveal your sassy fortune."
+        "NSMotionUsageDescription": "We use the accelerometer to detect when you shake the 8-ball to reveal your sassy fortune.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -25,15 +45,20 @@
         "backgroundColor": "#0a0b10"
       },
       "package": "com.sassy.eightball",
-      "permissions": ["VIBRATE"]
+      "permissions": [
+        "VIBRATE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": [
-      "expo-router"
-    ],
-    "scheme": "sassy8ball"
+    "scheme": "sassy8ball",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0caee6d8-9a9e-44d7-bfce-78d97e81f02e"
+      }
+    }
   }
 }

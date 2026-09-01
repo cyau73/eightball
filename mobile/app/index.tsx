@@ -1,9 +1,10 @@
+// app/index.tsx
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   StyleSheet,
   View,
   Text,
-  SafeAreaView,
+  NativeModules,
   Platform,
   Dimensions,
 } from 'react-native';
@@ -16,6 +17,9 @@ import { useShake } from '../hooks/useShake';
 import { useSoundEffects } from '../hooks/useSoundEffects';
 import { fetchSassyFortune } from '../services/api';
 import { SassIntensity, FortuneHistoryItem } from '../types';
+import { AdBanner } from '../components/AdBanner';
+import MobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MainEightBallScreen() {
   const { seed, totalDraws, incrementDraws, regenerateSeed } = useUserSeed();
@@ -39,8 +43,40 @@ export default function MainEightBallScreen() {
   const isDrawingRef = useRef<boolean>(false);
 
   const isMountedRef = useRef(true);
+
   useEffect(() => {
     isMountedRef.current = true;
+
+    // Verify native module is present (bypasses Expo Go & Web)
+    if (Platform.OS === 'web' || !NativeModules.RNGoogleMobileAdsModule) {
+      return;
+    }
+
+    const initializeMobileAds = async () => {
+      try {
+        const mobileAdsModule = require('react-native-google-mobile-ads');
+        const MobileAds = mobileAdsModule.default;
+        const MaxAdContentRating = mobileAdsModule.MaxAdContentRating;
+
+        await MobileAds().setRequestConfiguration({
+          testDeviceIdentifiers: [
+            'E5011E3108154CB090745BFEA0038549',
+            '1fada78d363247028174cad59d1041b8',
+            'EMULATOR',
+          ],
+          maxAdContentRating: MaxAdContentRating.G,
+          tagForChildDirectedTreatment: false,
+          tagForUnderAgeOfConsent: false,
+        });
+
+        await MobileAds().initialize();
+      } catch (err) {
+        console.warn('Failed to initialize MobileAds:', err);
+      }
+    };
+
+    initializeMobileAds();
+
     return () => {
       isMountedRef.current = false;
     };
@@ -151,7 +187,7 @@ export default function MainEightBallScreen() {
         />
       </View>
 
-      {/* Bottom Controls */}
+      {/* Controls */}
       <View style={styles.controlsArea}>
         <Controls
           intensity={intensity}
@@ -164,6 +200,9 @@ export default function MainEightBallScreen() {
           isLoading={isRevealing}
         />
       </View>
+
+      {/* Render AdBanner only on native iOS / Android */}
+      {Platform.OS !== 'web' && <AdBanner />}
 
       {/* History Drawer */}
       <HistoryDrawer
