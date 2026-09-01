@@ -1,9 +1,34 @@
+// app/api/fortune/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma, isDatabaseConfigured } from '@/lib/prisma';
-import { SASSY_FORTUNES, SassyFortuneItem } from '../../../../prisma/seed-data';
+import { SASSY_FORTUNES } from '../../../../prisma/seed-data';
 import { pickSeededItem } from '@/lib/seed-rng';
 
 export const dynamic = 'force-dynamic';
+
+// Mapping for intensity tier inheritance
+const INTENSITY_TIERS: Record<string, string[]> = {
+  MILD: ['MILD'],
+  SPICY: ['MILD', 'SPICY'],
+  SAVAGE: ['MILD', 'SPICY', 'SAVAGE'],
+};
+
+// Target tier selection weights when a specific tier filter is active
+const TIER_WEIGHTS: Record<string, Record<string, number>> = {
+  MILD: { MILD: 1.0 },
+  SPICY: { MILD: 0.5, SPICY: 0.5 },
+  SAVAGE: { MILD: 0.1, SPICY: 0.10, SAVAGE: 0.8 },
+};
+
+function getDeterministicRoll(seed: string, nonce: number): number {
+  const str = `${seed}-${nonce}`;
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return (Math.abs(hash) % 10000) / 10000;
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,8 +36,13 @@ export async function GET(request: NextRequest) {
     const seed = searchParams.get('seed') || request.headers.get('x-user-seed') || 'default-seed';
     const intensity = (searchParams.get('intensity') || 'ALL').toUpperCase();
     const category = (searchParams.get('category') || 'ALL').toUpperCase();
-    const nonce = parseInt(searchParams.get('nonce') || `${Date.now()}`, 10);
+
+    const parsedNonce = parseInt(searchParams.get('nonce') || '', 10);
+    const nonce = Number.isNaN(parsedNonce) ? Date.now() : parsedNonce;
     const useRandom = searchParams.get('random') === 'true';
+
+    const allowedIntensities = INTENSITY_TIERS[intensity] || ['MILD'];
+    const rawWeights = TIER_WEIGHTS[intensity] || (intensity === 'MILD' ? { MILD: 1.0 } : TIER_WEIGHTS.SAVAGE);
 
     let fortunes: Array<{
       id?: string;
@@ -25,13 +55,18 @@ export async function GET(request: NextRequest) {
     let isFromDatabase = false;
 
     if (isDatabaseConfigured()) {
+
+      console.log('\n---------------- 🔮 FORTUNE DEBUG ----------------');
+      console.log(`[REQ] Seed: "${seed}" | Requested Intensity: "${intensity}" | Nonce: "${nonce}"`);
+
       try {
-        const whereClause: any = { isApproved: true };
+        const whereClause: Record<string, any> = { isApproved: true };
         if (intensity !== 'ALL') {
-          whereClause.intensity = intensity;
+          whereClause.intensity = { in: allowedIntensities };
         }
+
         if (category !== 'ALL') {
-          whereClause.category = category;
+          whereClause.category = { equals: category, mode: 'insensitive' };
         }
 
         const dbFortunes = await prisma.fortune.findMany({
@@ -45,26 +80,38 @@ export async function GET(request: NextRequest) {
           },
         });
 
-        if (dbFortunes && dbFortunes.length > 0) {
+        if (dbFortunes.length > 0) {
           fortunes = dbFortunes;
           isFromDatabase = true;
+          console.log(`[DB/Memory] Retreived ${fortunes.length} message(s) matching intensity "${intensity}".`);
         }
       } catch (dbErr) {
-        console.warn('Database query failed, falling back to in-memory fortunes:', dbErr);
+        console.warn('Database query failed:', dbErr);
       }
     }
 
-    // In-memory fallback if DB not configured or returned empty
+    // In-memory fallback
     if (fortunes.length === 0) {
-      let filtered = [...SASSY_FORTUNES];
+      let filtered = SASSY_FORTUNES.map((f) => ({
+        ...f,
+        intensity: f.intensity.toUpperCase(),
+        category: f.category.toUpperCase(),
+      }));
+
       if (intensity !== 'ALL') {
-        filtered = filtered.filter((f) => f.intensity === intensity);
+        filtered = filtered.filter((f) => allowedIntensities.includes(f.intensity));
       }
       if (category !== 'ALL') {
         filtered = filtered.filter((f) => f.category === category);
       }
+
+      // Safe fallback if zero entries matched filters
       if (filtered.length === 0) {
-        filtered = [...SASSY_FORTUNES];
+        filtered = SASSY_FORTUNES.map((f) => ({
+          ...f,
+          intensity: f.intensity.toUpperCase(),
+          category: f.category.toUpperCase(),
+        }));
       }
 
       fortunes = filtered.map((f, index) => ({
@@ -73,32 +120,70 @@ export async function GET(request: NextRequest) {
       }));
     }
 
-    // Pick fortune
-    let selectedFortune;
-    let fortuneIndex = 0;
+    let targetPool = fortunes;
 
-    if (useRandom) {
-      fortuneIndex = Math.floor(Math.random() * fortunes.length);
-      selectedFortune = fortunes[fortuneIndex];
-    } else {
-      const result = pickSeededItem(fortunes, seed, nonce);
-      selectedFortune = result.item;
-      fortuneIndex = result.index;
+    // Apply weighted tier selection only when a specific intensity filter is chosen
+    if (intensity !== 'ALL') {
+      const fortunesByTier: Record<string, typeof fortunes> = {};
+      for (const f of fortunes) {
+        const tierKey = f.intensity.toUpperCase();
+        if (!fortunesByTier[tierKey]) fortunesByTier[tierKey] = [];
+        fortunesByTier[tierKey].push(f);
+      }
+
+      const availableTiers = Object.keys(rawWeights).filter(
+        (tier) => fortunesByTier[tier]?.length > 0
+      );
+
+      if (availableTiers.length > 0) {
+        const totalWeight = availableTiers.reduce((acc, tier) => acc + (rawWeights[tier] || 0), 0);
+        const roll = (useRandom ? Math.random() : getDeterministicRoll(seed, nonce)) * totalWeight;
+
+        let cumulative = 0;
+        let selectedTier = availableTiers[0];
+
+        for (const tier of availableTiers) {
+          cumulative += rawWeights[tier] || 0;
+          if (roll <= cumulative) {
+            selectedTier = tier;
+            break;
+          }
+        }
+
+        targetPool = fortunesByTier[selectedTier] || fortunes;
+      }
     }
 
-    // Asynchronously log the draw if DB is configured
+    // Pick item from target pool
+    let selectedFortune;
+    if (useRandom) {
+      selectedFortune = targetPool[Math.floor(Math.random() * targetPool.length)];
+    } else {
+      const result = pickSeededItem(targetPool, seed, nonce);
+      selectedFortune = result.item;
+    }
+
+    // Defensive fallback guard
+    if (!selectedFortune) {
+      selectedFortune = fortunes[0] || {
+        id: 'mock-0',
+        text: 'Signs point to yes.',
+        intensity: 'MILD',
+        category: 'GENERAL',
+        sentiment: 'POSITIVE',
+      };
+    }
+
+    // Async metrics logging
     if (isFromDatabase && selectedFortune.id && !selectedFortune.id.startsWith('mock-')) {
-      (async () => {
-        try {
-          // Increment draw count
-          await prisma.fortune.update({
+      try {
+        await Promise.allSettled([
+          prisma.fortune.update({
             where: { id: selectedFortune.id },
             data: { timesDrawn: { increment: 1 } },
-          });
-
-          // Update user query count if seed registered
-          if (seed && seed !== 'default-seed') {
-            await prisma.userSeed.upsert({
+          }),
+          seed && seed !== 'default-seed'
+            ? prisma.userSeed.upsert({
               where: { seedKey: seed },
               update: {
                 queryCount: { increment: 1 },
@@ -108,13 +193,16 @@ export async function GET(request: NextRequest) {
                 seedKey: seed,
                 queryCount: 1,
               },
-            });
-          }
-        } catch (logErr) {
-          console.warn('Logging error (non-fatal):', logErr);
-        }
-      })();
+            })
+            : Promise.resolve(),
+        ]);
+      } catch (logErr) {
+        console.warn('Metrics logging error (non-fatal):', logErr);
+      }
     }
+
+    console.log(`[RESULT] Selected Fortune: "${selectedFortune.text || selectedFortune}" (Intensity: ${selectedFortune.intensity || intensity})`);
+    console.log('--------------------------------------------------\n');
 
     return NextResponse.json({
       success: true,
@@ -131,7 +219,7 @@ export async function GET(request: NextRequest) {
       },
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('API Error in /api/fortune:', error);
     return NextResponse.json(
       {

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -20,6 +20,11 @@ import { SassIntensity, FortuneHistoryItem } from '../types';
 export default function MainEightBallScreen() {
   const { seed, totalDraws, incrementDraws, regenerateSeed } = useUserSeed();
   const [intensity, setIntensity] = useState<SassIntensity>('SAVAGE');
+  const [displayedIntensity, setDisplayedIntensity] = useState<SassIntensity>('SAVAGE');
+
+  const intensityRef = useRef<SassIntensity>(intensity);
+  intensityRef.current = intensity; // Always keep fresh on every render
+
   const [currentFortune, setCurrentFortune] = useState<string>('SHAKE OR SWIPE ME FOR SASS');
   const [isRevealing, setIsRevealing] = useState<boolean>(false);
   const [isShaking, setIsShaking] = useState<boolean>(false);
@@ -32,6 +37,17 @@ export default function MainEightBallScreen() {
 
   const drawNonceRef = useRef<number>(0);
   const isDrawingRef = useRef<boolean>(false);
+
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const seedRef = useRef(seed);
+  seedRef.current = seed;
 
   // Core Fortune Draw Logic
   const handleDrawFortune = useCallback(
@@ -51,15 +67,22 @@ export default function MainEightBallScreen() {
       const nonce = drawNonceRef.current;
 
       try {
-        const result = await fetchSassyFortune(seed, intensity, nonce);
+        const currentIntensity = intensityRef.current;
+        const currentSeed = seedRef.current;
+        const result = await fetchSassyFortune(currentSeed, currentIntensity, nonce);
 
         // Keep reveal animation active briefly for fluid effect
         setTimeout(() => {
-          setIsShaking(false);
+          if (isMountedRef.current) setIsShaking(false);
         }, 600);
 
         setTimeout(() => {
+          if (!isMountedRef.current) return;
           setCurrentFortune(result.fortune);
+          // Update the visual intensity to match the returned fortune
+          if (result.intensity) {
+            setDisplayedIntensity(result.intensity as SassIntensity);
+          }
           setIsRevealing(false);
           triggerRevealFeedback();
           incrementDraws();
@@ -81,12 +104,14 @@ export default function MainEightBallScreen() {
           isDrawingRef.current = false;
         }, 900);
       } catch (err) {
-        setIsShaking(false);
-        setIsRevealing(false);
+        if (isMountedRef.current) {
+          setIsShaking(false);
+          setIsRevealing(false);
+        }
         isDrawingRef.current = false;
       }
     },
-    [seed, intensity, triggerShakeFeedback, triggerSpinFeedback, triggerRevealFeedback, incrementDraws]
+    [triggerShakeFeedback, triggerSpinFeedback, triggerRevealFeedback, incrementDraws]
   );
 
   // Accelerometer shake hook
@@ -120,7 +145,7 @@ export default function MainEightBallScreen() {
         <EightBall
           fortuneText={currentFortune}
           isRevealing={isRevealing}
-          intensity={intensity}
+          intensity={displayedIntensity}
           isShaking={isShaking}
           onSpinTrigger={() => handleDrawFortune('spin')}
         />
