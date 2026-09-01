@@ -1,0 +1,70 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Intensity {
+  MILD
+  SPICY
+  SAVAGE
+}
+
+enum Category {
+  GENERAL
+  WORK
+  DATING
+  EXISTENTIAL
+  TECH
+}
+
+enum Sentiment {
+  POSITIVE
+  NEGATIVE
+  NEUTRAL
+  ROAST
+}
+
+model Fortune {
+  id          String       @id @default(cuid())
+  text        String       @unique
+  intensity   Intensity    @default(SPICY)
+  category    Category     @default(GENERAL)
+  sentiment   Sentiment    @default(ROAST)
+  isApproved  Boolean      @default(true)
+  timesDrawn  Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  logs        FortuneLog[]
+
+  @@index([intensity])
+  @@index([category])
+}
+
+model UserSeed {
+  id             String       @id @default(cuid())
+  seedKey        String       @unique
+  devicePlatform String?
+  queryCount     Int          @default(0)
+  lastSeenAt     DateTime     @default(now())
+  createdAt      DateTime     @default(now())
+  logs           FortuneLog[]
+
+  @@index([seedKey])
+}
+
+model FortuneLog {
+  id                 String    @id @default(cuid())
+  userSeedId         String?
+  userSeed           UserSeed? @relation(fields: [userSeedId], references: [id], onDelete: SetNull)
+  fortuneId          String
+  fortune            Fortune   @relation(fields: [fortuneId], references: [id], onDelete: Cascade)
+  intensityRequested Intensity @default(SPICY)
+  drawnAt            DateTime  @default(now())
+
+  @@index([userSeedId])
+  @@index([drawnAt])
+}

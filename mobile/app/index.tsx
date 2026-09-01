@@ -1,0 +1,233 @@
+import React, { useState, useCallback, useRef } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  SafeAreaView,
+  Platform,
+  Dimensions,
+} from 'react-native';
+import { EightBall } from '../components/EightBall';
+import { Controls } from '../components/Controls';
+import { HistoryDrawer } from '../components/HistoryDrawer';
+import { SettingsModal } from '../components/SettingsModal';
+import { useUserSeed } from '../hooks/useUserSeed';
+import { useShake } from '../hooks/useShake';
+import { useSoundEffects } from '../hooks/useSoundEffects';
+import { fetchSassyFortune } from '../services/api';
+import { SassIntensity, FortuneHistoryItem } from '../types';
+
+export default function MainEightBallScreen() {
+  const { seed, totalDraws, incrementDraws, regenerateSeed } = useUserSeed();
+  const [intensity, setIntensity] = useState<SassIntensity>('SAVAGE');
+  const [currentFortune, setCurrentFortune] = useState<string>('SHAKE OR SWIPE ME FOR SASS');
+  const [isRevealing, setIsRevealing] = useState<boolean>(false);
+  const [isShaking, setIsShaking] = useState<boolean>(false);
+  const [history, setHistory] = useState<FortuneHistoryItem[]>([]);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+  const [historyVisible, setHistoryVisible] = useState<boolean>(false);
+  const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
+
+  const { triggerShakeFeedback, triggerSpinFeedback, triggerRevealFeedback } = useSoundEffects(soundEnabled);
+
+  const drawNonceRef = useRef<number>(0);
+  const isDrawingRef = useRef<boolean>(false);
+
+  // Core Fortune Draw Logic
+  const handleDrawFortune = useCallback(
+    async (triggerType: 'shake' | 'spin' | 'button') => {
+      if (isDrawingRef.current) return;
+      isDrawingRef.current = true;
+      setIsRevealing(true);
+
+      if (triggerType === 'shake') {
+        setIsShaking(true);
+        triggerShakeFeedback();
+      } else {
+        triggerSpinFeedback();
+      }
+
+      drawNonceRef.current += 1;
+      const nonce = drawNonceRef.current;
+
+      try {
+        const result = await fetchSassyFortune(seed, intensity, nonce);
+
+        // Keep reveal animation active briefly for fluid effect
+        setTimeout(() => {
+          setIsShaking(false);
+        }, 600);
+
+        setTimeout(() => {
+          setCurrentFortune(result.fortune);
+          setIsRevealing(false);
+          triggerRevealFeedback();
+          incrementDraws();
+
+          // Add to local history log
+          setHistory((prev) => [
+            {
+              id: `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+              fortune: result.fortune,
+              intensity: result.intensity,
+              category: result.category,
+              sentiment: result.sentiment,
+              isFromDatabase: result.isFromDatabase,
+              timestamp: result.timestamp,
+            },
+            ...prev.slice(0, 49), // Store up to 50 recent fortunes
+          ]);
+
+          isDrawingRef.current = false;
+        }, 900);
+      } catch (err) {
+        setIsShaking(false);
+        setIsRevealing(false);
+        isDrawingRef.current = false;
+      }
+    },
+    [seed, intensity, triggerShakeFeedback, triggerSpinFeedback, triggerRevealFeedback, incrementDraws]
+  );
+
+  // Accelerometer shake hook
+  useShake(() => handleDrawFortune('shake'), {
+    threshold: 2.2,
+    cooldownMs: 1500,
+    enabled: true,
+  });
+
+  return (
+    <SafeAreaView style={styles.screen}>
+      {/* Mystic Ambient Glow Background */}
+      <View style={styles.ambientGlowTop} />
+      <View style={styles.ambientGlowBottom} />
+
+      {/* App Header */}
+      <View style={styles.header}>
+        <View style={styles.badgePill}>
+          <Text style={styles.badgePillText}>🔮 POWERED BY SASS</Text>
+        </View>
+        <Text style={styles.title}>MAGIC 8-BALL</Text>
+        <Text style={styles.subtitle}>
+          {Platform.OS === 'web'
+            ? 'Swipe the ball or click below for your sassy fortune'
+            : 'Shake your phone or swipe with your finger to divine the truth'}
+        </Text>
+      </View>
+
+      {/* Center 8-Ball Stage */}
+      <View style={styles.stage}>
+        <EightBall
+          fortuneText={currentFortune}
+          isRevealing={isRevealing}
+          intensity={intensity}
+          isShaking={isShaking}
+          onSpinTrigger={() => handleDrawFortune('spin')}
+        />
+      </View>
+
+      {/* Bottom Controls */}
+      <View style={styles.controlsArea}>
+        <Controls
+          intensity={intensity}
+          onSelectIntensity={setIntensity}
+          onSimulateShake={() => handleDrawFortune('button')}
+          onOpenHistory={() => setHistoryVisible(true)}
+          onOpenSettings={() => setSettingsVisible(true)}
+          soundEnabled={soundEnabled}
+          onToggleSound={() => setSoundEnabled((prev) => !prev)}
+          isLoading={isRevealing}
+        />
+      </View>
+
+      {/* History Drawer */}
+      <HistoryDrawer
+        visible={historyVisible}
+        history={history}
+        onClose={() => setHistoryVisible(false)}
+        onClearHistory={() => setHistory([])}
+      />
+
+      {/* Settings & Seed Modal */}
+      <SettingsModal
+        visible={settingsVisible}
+        seed={seed}
+        totalDraws={totalDraws}
+        onClose={() => setSettingsVisible(false)}
+        onRegenerateSeed={regenerateSeed}
+      />
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#0a0b10',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: Platform.OS === 'ios' ? 10 : 24,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  ambientGlowTop: {
+    position: 'absolute',
+    top: -120,
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    backgroundColor: 'rgba(236, 72, 153, 0.12)',
+  },
+  ambientGlowBottom: {
+    position: 'absolute',
+    bottom: -100,
+    width: 350,
+    height: 350,
+    borderRadius: 175,
+    backgroundColor: 'rgba(139, 92, 246, 0.14)',
+  },
+  header: {
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 8,
+  },
+  badgePill: {
+    backgroundColor: 'rgba(236, 72, 153, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(236, 72, 153, 0.35)',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 999,
+    marginBottom: 8,
+  },
+  badgePillText: {
+    color: '#f472b6',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: '#f8fafc',
+    letterSpacing: -0.5,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 13,
+    color: '#94a3b8',
+    textAlign: 'center',
+    maxWidth: 320,
+    lineHeight: 18,
+  },
+  stage: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  controlsArea: {
+    width: '100%',
+    alignItems: 'center',
+    paddingBottom: Platform.OS === 'ios' ? 12 : 20,
+  },
+});
