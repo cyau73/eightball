@@ -13,21 +13,25 @@ const INTENSITY_TIERS: Record<string, string[]> = {
   SAVAGE: ['MILD', 'SPICY', 'SAVAGE'],
 };
 
-// Target tier selection weights when a specific tier filter is active
+// Target tier selection weights adjusted to your exact requirement:
+// - MILD: Only MILD
+// - SPICY: Even 50/50 split between MILD and SPICY
+// - SAVAGE: Even chances for MILD/SPICY, but heavily weighted towards SAVAGE (e.g., 10% MILD, 10% SPICY, 80% SAVAGE)
 const TIER_WEIGHTS: Record<string, Record<string, number>> = {
   MILD: { MILD: 1.0 },
   SPICY: { MILD: 0.5, SPICY: 0.5 },
-  SAVAGE: { MILD: 0.1, SPICY: 0.10, SAVAGE: 0.8 },
+  SAVAGE: { MILD: 0.4, SPICY: 0.4, SAVAGE: 0.2 },
 };
 
 function getDeterministicRoll(seed: string, nonce: number): number {
-  const str = `${seed}-${nonce}`;
   let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i);
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash << 5) - hash + seed.charCodeAt(i);
     hash |= 0;
   }
-  return (Math.abs(hash) % 10000) / 10000;
+
+  const combined = Math.abs(hash ^ (nonce * 2654435761));
+  return (combined % 10000) / 10000;
 }
 
 export async function GET(request: NextRequest) {
@@ -42,7 +46,7 @@ export async function GET(request: NextRequest) {
     const useRandom = searchParams.get('random') === 'true';
 
     const allowedIntensities = INTENSITY_TIERS[intensity] || ['MILD'];
-    const rawWeights = TIER_WEIGHTS[intensity] || (intensity === 'MILD' ? { MILD: 1.0 } : TIER_WEIGHTS.SAVAGE);
+    const rawWeights = TIER_WEIGHTS[intensity] || { MILD: 0.33, SPICY: 0.33, SAVAGE: 0.34 };
 
     let fortunes: Array<{
       id?: string;
@@ -55,10 +59,6 @@ export async function GET(request: NextRequest) {
     let isFromDatabase = false;
 
     if (isDatabaseConfigured()) {
-
-      console.log('\n---------------- 🔮 FORTUNE DEBUG ----------------');
-      console.log(`[REQ] Seed: "${seed}" | Requested Intensity: "${intensity}" | Nonce: "${nonce}"`);
-
       try {
         const whereClause: Record<string, any> = { isApproved: true };
         if (intensity !== 'ALL') {
@@ -83,7 +83,6 @@ export async function GET(request: NextRequest) {
         if (dbFortunes.length > 0) {
           fortunes = dbFortunes;
           isFromDatabase = true;
-          console.log(`[DB/Memory] Retreived ${fortunes.length} message(s) matching intensity "${intensity}".`);
         }
       } catch (dbErr) {
         console.warn('Database query failed:', dbErr);
@@ -105,7 +104,6 @@ export async function GET(request: NextRequest) {
         filtered = filtered.filter((f) => f.category === category);
       }
 
-      // Safe fallback if zero entries matched filters
       if (filtered.length === 0) {
         filtered = SASSY_FORTUNES.map((f) => ({
           ...f,
@@ -120,31 +118,43 @@ export async function GET(request: NextRequest) {
       }));
     }
 
+    // Group retrieved fortunes by tier for debugging and balanced selection
+    const fortunesByTier: Record<string, typeof fortunes> = {};
+    for (const f of fortunes) {
+      const tierKey = f.intensity.toUpperCase();
+      if (!fortunesByTier[tierKey]) fortunesByTier[tierKey] = [];
+      fortunesByTier[tierKey].push(f);
+    }
+
+    const tierCounts = Object.fromEntries(
+      Object.entries(fortunesByTier).map(([tier, items]) => [tier, items.length])
+    );
+
     let targetPool = fortunes;
+    let selectedTier = 'ALL';
+    let rollValue = 0;
 
     // Apply weighted tier selection only when a specific intensity filter is chosen
     if (intensity !== 'ALL') {
-      const fortunesByTier: Record<string, typeof fortunes> = {};
-      for (const f of fortunes) {
-        const tierKey = f.intensity.toUpperCase();
-        if (!fortunesByTier[tierKey]) fortunesByTier[tierKey] = [];
-        fortunesByTier[tierKey].push(f);
-      }
-
-      const availableTiers = Object.keys(rawWeights).filter(
+      const tierOrder = ['MILD', 'SPICY', 'SAVAGE'];
+      const availableTiers = tierOrder.filter(
         (tier) => fortunesByTier[tier]?.length > 0
       );
 
       if (availableTiers.length > 0) {
-        const totalWeight = availableTiers.reduce((acc, tier) => acc + (rawWeights[tier] || 0), 0);
-        const roll = (useRandom ? Math.random() : getDeterministicRoll(seed, nonce)) * totalWeight;
+        // Dynamically scale weights if any tier is missing from the database pool
+        const totalRawWeight = availableTiers.reduce((acc, tier) => acc + (rawWeights[tier] || 0), 0);
+
+        const rawRoll = useRandom ? Math.random() : getDeterministicRoll(seed, nonce);
+        rollValue = rawRoll * totalRawWeight; // Scale directly against the available weight spectrum
 
         let cumulative = 0;
-        let selectedTier = availableTiers[0];
+        selectedTier = availableTiers[0];
 
         for (const tier of availableTiers) {
-          cumulative += rawWeights[tier] || 0;
-          if (roll <= cumulative) {
+          const normalizedWeight = (rawWeights[tier] || 0);
+          cumulative += normalizedWeight;
+          if (rollValue <= cumulative) {
             selectedTier = tier;
             break;
           }
@@ -152,6 +162,8 @@ export async function GET(request: NextRequest) {
 
         targetPool = fortunesByTier[selectedTier] || fortunes;
       }
+    } else {
+      rollValue = useRandom ? Math.random() : getDeterministicRoll(seed, nonce);
     }
 
     // Pick item from target pool
@@ -173,6 +185,15 @@ export async function GET(request: NextRequest) {
         sentiment: 'POSITIVE',
       };
     }
+
+    // Enhanced Debug Logging
+    console.log('\n---------------- 🔮 FORTUNE DEBUG ----------------');
+    console.log(`[REQ] Seed: "${seed}" | Intensity Filter: "${intensity}" | Nonce: "${nonce}" | Random: ${useRandom}`);
+    console.log(`[DB/Source] Retrieved total ${fortunes.length} message(s). Breakdown by tier:`, JSON.stringify(tierCounts));
+    console.log(`[SELECTION] Roll value generated: ${rollValue.toFixed(4)}`);
+    console.log(`[SELECTION] Chosen Tier pool: "${selectedTier}" (Pool size: ${targetPool.length})`);
+    console.log(`[RESULT] Selected Fortune: "${selectedFortune.text}" (Intensity: ${selectedFortune.intensity})`);
+    console.log('--------------------------------------------------\n');
 
     // Async metrics logging
     if (isFromDatabase && selectedFortune.id && !selectedFortune.id.startsWith('mock-')) {
@@ -201,9 +222,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    console.log(`[RESULT] Selected Fortune: "${selectedFortune.text || selectedFortune}" (Intensity: ${selectedFortune.intensity || intensity})`);
-    console.log('--------------------------------------------------\n');
-
     return NextResponse.json({
       success: true,
       fortune: selectedFortune.text,
@@ -216,6 +234,7 @@ export async function GET(request: NextRequest) {
         nonceUsed: nonce,
         isFromDatabase,
         poolSize: fortunes.length,
+        tierBreakdown: tierCounts,
       },
       timestamp: new Date().toISOString(),
     });

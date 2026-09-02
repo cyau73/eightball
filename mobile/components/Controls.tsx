@@ -1,3 +1,4 @@
+// components/Controls.tsx
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Volume2, VolumeX, History, Settings, Sparkles, Flame, Zap } from 'lucide-react-native';
@@ -39,19 +40,30 @@ export const Controls: React.FC<ControlsProps> = ({
       {
         id: 'SPICY',
         label: 'Spicy',
-        icon: <Flame size={16} color={intensity === 'SPICY' ? '#ec4899' : '#64748b'} />,
-        color: '#ec4899',
+        icon: <Flame size={16} color={intensity === 'SPICY' ? '#fc1d04ff' : '#64748b'} />,
+        color: '#fc1d04ff',
       },
       {
         id: 'SAVAGE',
         label: 'Savage',
-        icon: <Zap size={16} color={intensity === 'SAVAGE' ? '#f43f5e' : '#64748b'} />,
-        color: '#f43f5e',
+        icon: <Zap size={16} color={intensity === 'SAVAGE' ? '#f706a7ff' : '#64748b'} />,
+        color: '#f706a7ff',
       },
     ];
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={[styles.shakeButton, isLoading && styles.shakeButtonDisabled]}
+        onPress={onSimulateShake}
+        disabled={isLoading}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.shakeButtonText}>
+          {isLoading ? '🔮 DIVINING THE SASS...' : '✨ SHAKE OR SWIPE 8-BALL'}
+        </Text>
+      </TouchableOpacity>
+
       <View style={styles.intensityContainer}>
         <Text style={styles.sectionLabel}>SASS LEVEL</Text>
         <View style={styles.segmentedBar}>
@@ -84,17 +96,6 @@ export const Controls: React.FC<ControlsProps> = ({
           })}
         </View>
       </View>
-
-      <TouchableOpacity
-        style={[styles.shakeButton, isLoading && styles.shakeButtonDisabled]}
-        onPress={onSimulateShake}
-        disabled={isLoading}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.shakeButtonText}>
-          {isLoading ? '🔮 DIVINING THE SASS...' : '✨ SHAKE OR SWIPE 8-BALL'}
-        </Text>
-      </TouchableOpacity>
 
       <View style={styles.toolbar}>
         <TouchableOpacity style={styles.toolButton} onPress={onOpenHistory} activeOpacity={0.7}>

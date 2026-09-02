@@ -11,9 +11,9 @@ interface TriangleDieProps {
 const getGlowColor = (level: 'MILD' | 'SPICY' | 'SAVAGE') => {
   switch (level) {
     case 'SAVAGE':
-      return '#f43f5e'; // Crimson Red
+      return '#f706a7ff'; // Hot Pink
     case 'SPICY':
-      return '#ec4899'; // Hot Pink
+      return '#fc1d04ff'; // Vivid Orange
     case 'MILD':
     default:
       return '#38bdf8'; // Sky Blue

@@ -130,7 +130,7 @@ export default function MainEightBallScreen() {
         <View style={styles.badgePill}>
           <Text style={styles.badgePillText}>🔮 POWERED BY SASS</Text>
         </View>
-        <Text style={styles.title}>MAGIC EIGHT-BALL</Text>
+        <Text style={styles.title}>MAGIC EIGHT-BALL 🎱</Text>
         {/* <Text style={styles.subtitle}>
           {Platform.OS === 'web'
             ? 'Swipe the ball or click below for your sassy fortune'
@@ -161,7 +161,7 @@ export default function MainEightBallScreen() {
         />
       </View>
 
-      {Platform.OS !== 'web' && <AdBanner />}
+      <AdBanner />
 
       <HistoryDrawer
         visible={historyVisible}
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     width: 320,
     height: 320,
     borderRadius: 160,
-    backgroundColor: 'rgba(236, 72, 153, 0.12)',
+    backgroundColor: 'rgba(113, 72, 236, 0.12)',
   },
   ambientGlowBottom: {
     position: 'absolute',
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 999,
-    marginBottom: 8,
+    marginBottom: 2,
   },
   badgePillText: {
     color: '#f472b6',
@@ -228,11 +228,11 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '900',
     color: '#f8fafc',
     letterSpacing: -0.5,
-    marginBottom: 4,
+    marginBottom: 2,
   },
   subtitle: {
     fontSize: 13,
