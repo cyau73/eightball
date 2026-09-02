@@ -4,9 +4,7 @@ import {
   StyleSheet,
   View,
   Text,
-  NativeModules,
   Platform,
-  Dimensions,
 } from 'react-native';
 import { EightBall } from '../components/EightBall';
 import { Controls } from '../components/Controls';
@@ -18,7 +16,7 @@ import { useSoundEffects } from '../hooks/useSoundEffects';
 import { fetchSassyFortune } from '../services/api';
 import { SassIntensity, FortuneHistoryItem } from '../types';
 import { AdBanner } from '../components/AdBanner';
-import MobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
+import { useGoogleMobileAdsInit } from '../components/AdManager';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MainEightBallScreen() {
@@ -27,7 +25,7 @@ export default function MainEightBallScreen() {
   const [displayedIntensity, setDisplayedIntensity] = useState<SassIntensity>('SAVAGE');
 
   const intensityRef = useRef<SassIntensity>(intensity);
-  intensityRef.current = intensity; // Always keep fresh on every render
+  intensityRef.current = intensity;
 
   const [currentFortune, setCurrentFortune] = useState<string>('SHAKE OR SWIPE ME FOR SASS');
   const [isRevealing, setIsRevealing] = useState<boolean>(false);
@@ -39,44 +37,15 @@ export default function MainEightBallScreen() {
 
   const { triggerShakeFeedback, triggerSpinFeedback, triggerRevealFeedback } = useSoundEffects(soundEnabled);
 
+  // Initialize ads safely without crashing web bundler
+  useGoogleMobileAdsInit();
+
   const drawNonceRef = useRef<number>(0);
   const isDrawingRef = useRef<boolean>(false);
-
   const isMountedRef = useRef(true);
 
   useEffect(() => {
     isMountedRef.current = true;
-
-    // Verify native module is present (bypasses Expo Go & Web)
-    if (Platform.OS === 'web' || !NativeModules.RNGoogleMobileAdsModule) {
-      return;
-    }
-
-    const initializeMobileAds = async () => {
-      try {
-        const mobileAdsModule = require('react-native-google-mobile-ads');
-        const MobileAds = mobileAdsModule.default;
-        const MaxAdContentRating = mobileAdsModule.MaxAdContentRating;
-
-        await MobileAds().setRequestConfiguration({
-          testDeviceIdentifiers: [
-            'E5011E3108154CB090745BFEA0038549',
-            '1fada78d363247028174cad59d1041b8',
-            'EMULATOR',
-          ],
-          maxAdContentRating: MaxAdContentRating.G,
-          tagForChildDirectedTreatment: false,
-          tagForUnderAgeOfConsent: false,
-        });
-
-        await MobileAds().initialize();
-      } catch (err) {
-        console.warn('Failed to initialize MobileAds:', err);
-      }
-    };
-
-    initializeMobileAds();
-
     return () => {
       isMountedRef.current = false;
     };
@@ -85,7 +54,6 @@ export default function MainEightBallScreen() {
   const seedRef = useRef(seed);
   seedRef.current = seed;
 
-  // Core Fortune Draw Logic
   const handleDrawFortune = useCallback(
     async (triggerType: 'shake' | 'spin' | 'button') => {
       if (isDrawingRef.current) return;
@@ -107,7 +75,6 @@ export default function MainEightBallScreen() {
         const currentSeed = seedRef.current;
         const result = await fetchSassyFortune(currentSeed, currentIntensity, nonce);
 
-        // Keep reveal animation active briefly for fluid effect
         setTimeout(() => {
           if (isMountedRef.current) setIsShaking(false);
         }, 600);
@@ -115,7 +82,6 @@ export default function MainEightBallScreen() {
         setTimeout(() => {
           if (!isMountedRef.current) return;
           setCurrentFortune(result.fortune);
-          // Update the visual intensity to match the returned fortune
           if (result.intensity) {
             setDisplayedIntensity(result.intensity as SassIntensity);
           }
@@ -123,7 +89,6 @@ export default function MainEightBallScreen() {
           triggerRevealFeedback();
           incrementDraws();
 
-          // Add to local history log
           setHistory((prev) => [
             {
               id: `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
@@ -134,7 +99,7 @@ export default function MainEightBallScreen() {
               isFromDatabase: result.isFromDatabase,
               timestamp: result.timestamp,
             },
-            ...prev.slice(0, 49), // Store up to 50 recent fortunes
+            ...prev.slice(0, 49),
           ]);
 
           isDrawingRef.current = false;
@@ -150,7 +115,6 @@ export default function MainEightBallScreen() {
     [triggerShakeFeedback, triggerSpinFeedback, triggerRevealFeedback, incrementDraws]
   );
 
-  // Accelerometer shake hook
   useShake(() => handleDrawFortune('shake'), {
     threshold: 2.2,
     cooldownMs: 1500,
@@ -159,24 +123,21 @@ export default function MainEightBallScreen() {
 
   return (
     <SafeAreaView style={styles.screen}>
-      {/* Mystic Ambient Glow Background */}
       <View style={styles.ambientGlowTop} />
       <View style={styles.ambientGlowBottom} />
 
-      {/* App Header */}
       <View style={styles.header}>
         <View style={styles.badgePill}>
           <Text style={styles.badgePillText}>🔮 POWERED BY SASS</Text>
         </View>
-        <Text style={styles.title}>MAGIC 8-BALL</Text>
-        <Text style={styles.subtitle}>
+        <Text style={styles.title}>MAGIC EIGHT-BALL</Text>
+        {/* <Text style={styles.subtitle}>
           {Platform.OS === 'web'
             ? 'Swipe the ball or click below for your sassy fortune'
-            : 'Shake your phone or swipe with your finger to divine the truth'}
-        </Text>
+            : 'Shake your phone or swipe'}
+        </Text> */}
       </View>
 
-      {/* Center 8-Ball Stage */}
       <View style={styles.stage}>
         <EightBall
           fortuneText={currentFortune}
@@ -187,7 +148,6 @@ export default function MainEightBallScreen() {
         />
       </View>
 
-      {/* Controls */}
       <View style={styles.controlsArea}>
         <Controls
           intensity={intensity}
@@ -201,10 +161,8 @@ export default function MainEightBallScreen() {
         />
       </View>
 
-      {/* Render AdBanner only on native iOS / Android */}
       {Platform.OS !== 'web' && <AdBanner />}
 
-      {/* History Drawer */}
       <HistoryDrawer
         visible={historyVisible}
         history={history}
@@ -212,7 +170,6 @@ export default function MainEightBallScreen() {
         onClearHistory={() => setHistory([])}
       />
 
-      {/* Settings & Seed Modal */}
       <SettingsModal
         visible={settingsVisible}
         seed={seed}

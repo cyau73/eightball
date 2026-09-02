@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Platform, NativeModules } from 'react-native';
+import { StyleSheet, View, Platform, NativeModules, Text } from 'react-native';
 
 let BannerAd: any = null;
 let BannerAdSize: any = null;
@@ -29,7 +29,11 @@ const adUnitId = __DEV__
 
 export const AdBanner: React.FC = () => {
   if (!isAdMobAvailable || !BannerAd) {
-    return null;
+    return (
+      <View style={styles.webAdPlaceholder}>
+        <Text style={styles.adText}>[Ad Banner Placeholder - Web]</Text>
+      </View>
+    );
   }
 
   return (
@@ -55,5 +59,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'transparent',
     paddingVertical: 4,
+  },
+  webAdPlaceholder: {
+    height: 50,
+    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  adText: {
+    color: '#9ca3af',
+    fontSize: 12,
   },
 });
