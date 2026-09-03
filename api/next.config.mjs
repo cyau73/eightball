@@ -1,5 +1,7 @@
+// api/next.config.mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  allowedDevOrigins: ['mac-mini.tail0f16ec.ts.net'],
   async headers() {
     return [
       {
@@ -11,7 +13,7 @@ const nextConfig = {
           {
             key: "Access-Control-Allow-Headers",
             value:
-              "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-User-Seed",
+              "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-User-Seed, x-client-secret",
           },
         ],
       },

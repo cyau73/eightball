@@ -35,6 +35,15 @@ function getDeterministicRoll(seed: string, nonce: number): number {
 }
 
 export async function GET(request: NextRequest) {
+  const clientSecret = request.headers.get('x-client-secret');
+  const expectedSecret = process.env.MOBILE_API_SECRET;
+
+  // Check if the secret matches
+  if (!clientSecret || clientSecret !== expectedSecret) {
+    console.warn(`[AUTH] Rejected API request. Received secret: "${clientSecret}", Expected: "${expectedSecret ? 'CONFIGURED' : 'MISSING'}"`);
+    return NextResponse.json({ error: 'Unauthorized API access' }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const seed = searchParams.get('seed') || request.headers.get('x-user-seed') || 'default-seed';

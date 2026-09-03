@@ -13,11 +13,12 @@ import { SettingsModal } from '../components/SettingsModal';
 import { useUserSeed } from '../hooks/useUserSeed';
 import { useShake } from '../hooks/useShake';
 import { useSoundEffects } from '../hooks/useSoundEffects';
-import { fetchSassyFortune } from '../services/api';
+import { fetchSassyFortune, getOfflineFortune } from '../services/api';
 import { SassIntensity, FortuneHistoryItem } from '../types';
 import { AdBanner } from '../components/AdBanner';
 import { useGoogleMobileAdsInit } from '../components/AdManager';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ConnectionLight } from '../components/ConnectionLight';
 
 export default function MainEightBallScreen() {
   const { seed, totalDraws, incrementDraws, regenerateSeed } = useUserSeed();
@@ -34,6 +35,7 @@ export default function MainEightBallScreen() {
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [historyVisible, setHistoryVisible] = useState<boolean>(false);
   const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
+  const [isOnline, setIsOnline] = useState<boolean>(true);
 
   const { triggerShakeFeedback, triggerSpinFeedback, triggerRevealFeedback } = useSoundEffects(soundEnabled);
 
@@ -70,47 +72,58 @@ export default function MainEightBallScreen() {
       drawNonceRef.current += 1;
       const nonce = drawNonceRef.current;
 
+      let result;
+
       try {
         const currentIntensity = intensityRef.current;
         const currentSeed = seedRef.current;
-        const result = await fetchSassyFortune(currentSeed, currentIntensity, nonce);
 
-        setTimeout(() => {
-          if (isMountedRef.current) setIsShaking(false);
-        }, 600);
+        // This will now throw if network fails or API returns 401/500
+        result = await fetchSassyFortune(currentSeed, currentIntensity, nonce);
 
-        setTimeout(() => {
-          if (!isMountedRef.current) return;
-          setCurrentFortune(result.fortune);
-          if (result.intensity) {
-            setDisplayedIntensity(result.intensity as SassIntensity);
-          }
-          setIsRevealing(false);
-          triggerRevealFeedback();
-          incrementDraws();
+        // API call succeeded! Turn light green.
+        if (isMountedRef.current) setIsOnline(true);
 
-          setHistory((prev) => [
-            {
-              id: `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-              fortune: result.fortune,
-              intensity: result.intensity,
-              category: result.category,
-              sentiment: result.sentiment,
-              isFromDatabase: result.isFromDatabase,
-              timestamp: result.timestamp,
-            },
-            ...prev.slice(0, 49),
-          ]);
-
-          isDrawingRef.current = false;
-        }, 900);
       } catch (err) {
-        if (isMountedRef.current) {
-          setIsShaking(false);
-          setIsRevealing(false);
-        }
-        isDrawingRef.current = false;
+        console.warn('API request failed, switching to offline fallback mode:', err);
+
+        // API call failed. Turn light orange.
+        if (isMountedRef.current) setIsOnline(false);
+
+        // Pull fallback content locally
+        result = getOfflineFortune(intensityRef.current);
       }
+
+      // Proceed with animating and rendering whichever result we got (API or Offline)
+      setTimeout(() => {
+        if (isMountedRef.current) setIsShaking(false);
+      }, 600);
+
+      setTimeout(() => {
+        if (!isMountedRef.current) return;
+        setCurrentFortune(result.fortune);
+        if (result.intensity) {
+          setDisplayedIntensity(result.intensity as SassIntensity);
+        }
+        setIsRevealing(false);
+        triggerRevealFeedback();
+        incrementDraws();
+
+        setHistory((prev) => [
+          {
+            id: `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+            fortune: result.fortune,
+            intensity: result.intensity,
+            category: result.category,
+            sentiment: result.sentiment,
+            isFromDatabase: result.isFromDatabase,
+            timestamp: result.timestamp,
+          },
+          ...prev.slice(0, 49),
+        ]);
+
+        isDrawingRef.current = false;
+      }, 900);
     },
     [triggerShakeFeedback, triggerSpinFeedback, triggerRevealFeedback, incrementDraws]
   );
@@ -125,6 +138,9 @@ export default function MainEightBallScreen() {
     <SafeAreaView style={styles.screen}>
       <View style={styles.ambientGlowTop} />
       <View style={styles.ambientGlowBottom} />
+
+      {/* Discreet connection indicator light */}
+      <ConnectionLight isOnline={isOnline} />
 
       <View style={styles.header}>
         <View style={styles.badgePill}>
@@ -250,5 +266,21 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     paddingBottom: Platform.OS === 'ios' ? 12 : 20,
+  },
+  container: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    padding: 8,
+  },
+  light: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 2,
   },
 });

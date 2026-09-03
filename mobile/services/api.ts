@@ -2,7 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FortuneResult, SassIntensity } from '../types';
 
 const API_BASE_URL_KEY = '@sassy_8ball_api_url';
-export const DEFAULT_API_URL = 'http://mac-mini.tail0f16ec.ts.net:3002';
+export const DEFAULT_API_URL = 'https://mac-mini.tail0f16ec.ts.net:4000';
+const API_SECRET = process.env.EXPO_PUBLIC_MOBILE_API_SECRET;
 
 // Offline fallback fortunes
 const OFFLINE_FORTUNES: Record<SassIntensity, string[]> = {
@@ -68,14 +69,15 @@ export async function fetchSassyFortune(
 ): Promise<FortuneResult> {
   const baseUrl = await getApiBaseUrl();
 
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000); // 4s timeout for snappy UI
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 4000);
 
+  try {
     const url = `${baseUrl}/api/fortune?seed=${encodeURIComponent(seed)}&intensity=${intensity}&nonce=${nonce}`;
     const response = await fetch(url, {
       method: 'GET',
       headers: {
+        'x-client-secret': API_SECRET || '',
         'Content-Type': 'application/json',
         'X-User-Seed': seed,
       },
@@ -84,26 +86,35 @@ export async function fetchSassyFortune(
 
     clearTimeout(timeoutId);
 
-    if (response.ok) {
-      const data = await response.json();
-      if (data.success && data.fortune) {
-        return {
-          fortune: data.fortune,
-          intensity: (data.metadata?.intensity as SassIntensity) || intensity,
-          category: data.metadata?.category || 'GENERAL',
-          sentiment: data.metadata?.sentiment || 'ROAST',
-          isFromDatabase: Boolean(data.metadata?.isFromDatabase),
-          timestamp: new Date().toISOString(),
-        };
-      }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  } catch (error) {
-    console.warn('API fetch failed or timed out, using offline fallback:', error);
-  }
 
-  // Graceful offline fallback
+    const data = await response.json();
+    if (data.success && data.fortune) {
+      return {
+        fortune: data.fortune,
+        intensity: (data.metadata?.intensity as SassIntensity) || intensity,
+        category: data.metadata?.category || 'GENERAL',
+        sentiment: data.metadata?.sentiment || 'ROAST',
+        isFromDatabase: Boolean(data.metadata?.isFromDatabase),
+        timestamp: new Date().toISOString(),
+      };
+    }
+
+    throw new Error('Invalid response structure from API');
+  } catch (error) {
+    clearTimeout(timeoutId);
+    // Rethrow so the UI component knows the request failed and can flip the light
+    throw error;
+  }
+}
+
+// Export your offline helper so the frontend screen can use it
+export function getOfflineFortune(intensity: SassIntensity): FortuneResult {
   const pool = OFFLINE_FORTUNES[intensity] || OFFLINE_FORTUNES.SPICY;
   const randomIndex = Math.floor(Math.random() * pool.length);
+
   return {
     fortune: pool[randomIndex],
     intensity,
@@ -112,18 +123,4 @@ export async function fetchSassyFortune(
     isFromDatabase: false,
     timestamp: new Date().toISOString(),
   };
-}
-
-export async function syncSeedWithServer(seedKey: string, platform: string): Promise<boolean> {
-  const baseUrl = await getApiBaseUrl();
-  try {
-    const response = await fetch(`${baseUrl}/api/seed`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ seedKey, devicePlatform: platform }),
-    });
-    return response.ok;
-  } catch {
-    return false;
-  }
 }
