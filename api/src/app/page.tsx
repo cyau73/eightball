@@ -1,3 +1,4 @@
+// app/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -7,9 +8,14 @@ export default function ApiLandingPage() {
   const [fortune, setFortune] = useState<string>('Ask the sassy 8-ball anything...');
   const [metadata, setMetadata] = useState<any>(null);
   const [intensity, setIntensity] = useState<'ALL' | 'MILD' | 'SPICY' | 'SAVAGE'>('SAVAGE');
-  const [seed, setSeed] = useState<string>('seed_demo_user_123');
+  const [seed, setSeed] = useState<string>('demo_user');
   const [loading, setLoading] = useState(false);
   const [health, setHealth] = useState<any>(null);
+
+  // Secret Key State - Note the NEXT_PUBLIC_ prefix so the browser bundle can read it
+  const [apiSecret, setApiSecret] = useState<string>(
+    process.env.NEXT_PUBLIC_MOBILE_API_SECRET || ''
+  );
 
   // Catalog state
   const [messages, setMessages] = useState<any[]>([]);
@@ -28,14 +34,19 @@ export default function ApiLandingPage() {
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/fortune?seed=${encodeURIComponent(seed)}&intensity=${intensity}&nonce=${Date.now()}`
+        `/api/fortune?seed=${encodeURIComponent(seed)}&intensity=${intensity}&nonce=${Date.now()}`,
+        {
+          headers: {
+            'x-client-secret': apiSecret,
+          },
+        }
       );
       const data = await res.json();
       if (data.success) {
         setFortune(data.fortune);
         setMetadata(data.metadata);
       } else {
-        setFortune(data.fallback || 'Something went wrong!');
+        setFortune(data.fallback || data.error || 'Something went wrong!');
       }
     } catch (e: any) {
       setFortune('Error reaching server: ' + e.message);
@@ -47,7 +58,11 @@ export default function ApiLandingPage() {
   const fetchCatalog = async () => {
     setCatalogLoading(true);
     try {
-      const res = await fetch(`/api/messages?search=${encodeURIComponent(catalogSearch)}&intensity=${catalogIntensity}`);
+      const res = await fetch(`/api/messages?search=${encodeURIComponent(catalogSearch)}&intensity=${catalogIntensity}`, {
+        headers: {
+          'x-client-secret': apiSecret,
+        },
+      });
       const data = await res.json();
       if (data.success) {
         setMessages(data.messages || []);
@@ -66,7 +81,10 @@ export default function ApiLandingPage() {
     try {
       const res = await fetch('/api/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-client-secret': apiSecret,
+        },
         body: JSON.stringify({
           text: newText,
           intensity: newIntensity,
@@ -91,7 +109,7 @@ export default function ApiLandingPage() {
     fetch('/api/health')
       .then((r) => r.json())
       .then((data) => setHealth(data))
-      .catch(() => {});
+      .catch(() => { });
     fetchCatalog();
   }, []);
 
@@ -137,6 +155,42 @@ export default function ApiLandingPage() {
         <p style={{ color: 'var(--text-secondary)', fontSize: '16px', maxWidth: '640px', margin: '0 auto' }}>
           Explore, filter, and manage all curated sassy fortunes powering your mobile app on Vercel.
         </p>
+
+        {/* Global Client Secret Bar */}
+        <div
+          style={{
+            maxWidth: '480px',
+            margin: '24px auto 0 auto',
+            background: 'var(--bg-card)',
+            padding: '12px 16px',
+            borderRadius: '14px',
+            border: '1px solid var(--border-color)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '6px',
+            textAlign: 'left',
+          }}
+        >
+          <label style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 800, letterSpacing: '0.5px' }}>
+            🔑 CLIENT SECRET KEY (x-client-secret)
+          </label>
+          <input
+            type="password"
+            value={apiSecret}
+            onChange={(e) => setApiSecret(e.target.value)}
+            placeholder="Enter API secret key for authenticated requests..."
+            style={{
+              width: '100%',
+              padding: '10px 12px',
+              borderRadius: '8px',
+              background: 'rgba(0,0,0,0.4)',
+              border: '1px solid var(--border-color)',
+              color: '#fff',
+              fontSize: '13px',
+              fontFamily: 'monospace',
+            }}
+          />
+        </div>
       </div>
 
       {/* Navigation Tabs */}
@@ -362,14 +416,14 @@ export default function ApiLandingPage() {
                           msg.intensity === 'SAVAGE'
                             ? 'rgba(244, 63, 94, 0.15)'
                             : msg.intensity === 'SPICY'
-                            ? 'rgba(236, 72, 153, 0.15)'
-                            : 'rgba(56, 189, 248, 0.15)',
+                              ? 'rgba(236, 72, 153, 0.15)'
+                              : 'rgba(56, 189, 248, 0.15)',
                         color:
                           msg.intensity === 'SAVAGE'
                             ? '#f43f5e'
                             : msg.intensity === 'SPICY'
-                            ? '#ec4899'
-                            : '#38bdf8',
+                              ? '#ec4899'
+                              : '#38bdf8',
                       }}
                     >
                       {msg.intensity}
@@ -503,7 +557,7 @@ export default function ApiLandingPage() {
               <code style={{ color: '#fff', fontSize: '14px' }}>/api/fortune</code>
             </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '12px' }}>
-              Retrieves a seeded or random sassy fortune.
+              Retrieves a seeded or random sassy fortune. Requires header: <code style={{ color: '#f472b6' }}>x-client-secret</code>
             </p>
             <pre style={{ background: '#090a0f', padding: '12px', borderRadius: '8px', fontSize: '12px', color: '#38bdf8', overflowX: 'auto' }}>
               GET /api/fortune?seed=seed_usr_123&intensity=SAVAGE
@@ -518,7 +572,7 @@ export default function ApiLandingPage() {
               <code style={{ color: '#fff', fontSize: '14px' }}>/api/messages</code>
             </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '12px' }}>
-              List and add new sassy fortunes to PostgreSQL.
+              List and add new sassy fortunes to PostgreSQL. Requires header: <code style={{ color: '#f472b6' }}>x-client-secret</code>
             </p>
             <pre style={{ background: '#090a0f', padding: '12px', borderRadius: '8px', fontSize: '12px', color: '#38bdf8', overflowX: 'auto' }}>
               POST /api/messages
