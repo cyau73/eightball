@@ -2,9 +2,22 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FortuneResult, SassIntensity } from '../types';
 
+// Environment variable prioritized first for web deployments (Vercel)
+const ENV_API_URL = process.env.EXPO_PUBLIC_API_URL;
+const API_SECRET = process.env.EXPO_PUBLIC_MOBILE_API_SECRET || '';
+
 const API_BASE_URL_KEY = '@sassy_8ball_api_url';
+
+// Default Tailscale HTTPS local API target
 export const DEFAULT_API_URL = 'https://mac-mini.tail0f16ec.ts.net:4000';
-const API_SECRET = process.env.EXPO_PUBLIC_MOBILE_API_SECRET;
+
+export interface FortuneParams {
+  seed?: string;
+  intensity?: string;
+  category?: string;
+  nonce?: number;
+  random?: boolean;
+}
 
 // Offline fallback fortunes
 const OFFLINE_FORTUNES: Record<SassIntensity, string[]> = {
@@ -47,6 +60,11 @@ const OFFLINE_FORTUNES: Record<SassIntensity, string[]> = {
 };
 
 export async function getApiBaseUrl(): Promise<string> {
+  // Always use the EXPO_PUBLIC_API_URL build variable when deployed on Vercel
+  if (ENV_API_URL) {
+    return ENV_API_URL.replace(/\/$/, '');
+  }
+
   try {
     const saved = await AsyncStorage.getItem(API_BASE_URL_KEY);
     return saved || DEFAULT_API_URL;
@@ -69,6 +87,7 @@ export async function fetchSassyFortune(
   nonce: number = Date.now()
 ): Promise<FortuneResult> {
   const baseUrl = await getApiBaseUrl();
+  console.log('Loaded Secret Key:', process.env.EXPO_PUBLIC_MOBILE_SECRET ? 'YES' : 'NO/EMPTY');
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 4000);
@@ -80,7 +99,7 @@ export async function fetchSassyFortune(
       headers: {
         'x-client-secret': API_SECRET || '',
         'Content-Type': 'application/json',
-        'X-User-Seed': seed,
+        'x-user-seed': seed,
       },
       signal: controller.signal,
     });
@@ -106,12 +125,10 @@ export async function fetchSassyFortune(
     throw new Error('Invalid response structure from API');
   } catch (error) {
     clearTimeout(timeoutId);
-    // Rethrow so the UI component knows the request failed and can flip the light
     throw error;
   }
 }
 
-// Export your offline helper so the frontend screen can use it
 export function getOfflineFortune(intensity: SassIntensity): FortuneResult {
   const pool = OFFLINE_FORTUNES[intensity] || OFFLINE_FORTUNES.SPICY;
   const randomIndex = Math.floor(Math.random() * pool.length);
