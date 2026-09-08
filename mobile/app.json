@@ -51,7 +51,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "output": "static"
     },
     "scheme": "sassy8ball",
     "extra": {

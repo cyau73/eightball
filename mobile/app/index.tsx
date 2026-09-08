@@ -5,6 +5,7 @@ import {
   View,
   Text,
   Platform,
+  ScrollView,
 } from 'react-native';
 import { EightBall } from '../components/EightBall';
 import { Controls } from '../components/Controls';
@@ -177,7 +178,14 @@ export default function MainEightBallScreen() {
         />
       </View>
 
-      <AdBanner />
+      {/* Ad banner */}
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Magic 8-Ball UI components */}
+        <AdBanner slotId="YOUR_SLOT_ID" />
+      </ScrollView>
 
       <HistoryDrawer
         visible={historyVisible}

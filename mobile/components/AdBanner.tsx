@@ -27,7 +27,12 @@ const adUnitId = __DEV__
     default: TestIds?.ADAPTIVE_BANNER,
   });
 
-export const AdBanner: React.FC = () => {
+interface AdBannerProps {
+  slotId?: string;
+  format?: 'auto' | 'rectangle' | 'horizontal';
+}
+
+export const AdBanner: React.FC<AdBannerProps> = () => {
   if (!isAdMobAvailable || !BannerAd) {
     return (
       <View style={styles.webAdPlaceholder}>
