@@ -50,11 +50,12 @@ export const AdBanner: React.FC = () => {
 const styles = StyleSheet.create({
     adContainer: {
         width: '100%',
+        maxHeight: 90,
+        height: 90,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'transparent',
         paddingVertical: 4,
         overflow: 'hidden',
-        minHeight: 50,
     },
 });

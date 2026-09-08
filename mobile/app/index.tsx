@@ -179,13 +179,9 @@ export default function MainEightBallScreen() {
       </View>
 
       {/* Ad banner */}
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Magic 8-Ball UI components */}
+      <View style={styles.adWrapper}>
         <AdBanner slotId="YOUR_SLOT_ID" />
-      </ScrollView>
+      </View>
 
       <HistoryDrawer
         visible={historyVisible}
@@ -290,5 +286,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 2,
     elevation: 2,
+  },
+  adWrapper: {
+    width: '100%',
+    maxHeight: 90,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
   },
 });
