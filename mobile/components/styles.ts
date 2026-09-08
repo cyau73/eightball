@@ -1,8 +1,19 @@
 // styles.ts
 import { StyleSheet, Dimensions } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
-export const BALL_SIZE = Math.min(width * 0.9, height * 0.45, 320);
+const getDimensions = () => {
+    if (typeof window !== 'undefined' && window.innerWidth > 0 && window.innerHeight > 0) {
+        return { width: window.innerWidth, height: window.innerHeight };
+    }
+    const dim = Dimensions.get('window');
+    if (dim && dim.width > 0 && dim.height > 0) {
+        return dim;
+    }
+    return { width: 390, height: 844 };
+};
+
+const { width, height } = getDimensions();
+export const BALL_SIZE = Math.max(Math.min(width * 0.86, height * 0.42, 320), 220);
 export const PORTAL_SIZE = BALL_SIZE * 0.68;
 export const DIE_SIZE = Math.round(PORTAL_SIZE * 0.96);
 
