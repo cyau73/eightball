@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Animated, Easing } from 'react-native';
 import Svg, { Polygon, Defs, LinearGradient, Stop } from 'react-native-svg';
+import { DIE_SIZE } from './styles';
 
 interface TriangleDieProps {
   text: string;
@@ -112,7 +113,7 @@ export const TriangleDie: React.FC<TriangleDieProps> = ({ text, isRevealing, int
         },
       ]}
     >
-      <Svg height="260" width="260" viewBox="0 0 100 100" style={styles.svg}>
+      <Svg height={DIE_SIZE} width={DIE_SIZE} viewBox="0 0 100 100" style={styles.svg}>
         <Defs>
           <LinearGradient id="dieGrad" x1="0%" y1="0%" x2="0%" y2="100%">
             <Stop offset="0%" stopColor="#1e3a8a" stopOpacity="0.95" />
@@ -152,8 +153,8 @@ export const TriangleDie: React.FC<TriangleDieProps> = ({ text, isRevealing, int
 
 const styles = StyleSheet.create({
   container: {
-    width: 260,
-    height: 260,
+    width: DIE_SIZE,
+    height: DIE_SIZE,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -169,8 +170,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 48,
-    paddingBottom: 40,
+    paddingHorizontal: Math.round(DIE_SIZE * 0.16),
+    paddingBottom: Math.round(DIE_SIZE * 0.16),
+    paddingTop: 4,
   },
   fortuneText: {
     fontSize: 15,

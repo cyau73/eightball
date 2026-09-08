@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0a0b10',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: Platform.OS === 'ios' ? 10 : 24,
+    paddingVertical: Platform.OS === 'ios' ? 6 : 10,
     position: 'relative',
     overflow: 'hidden',
   },
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   controlsArea: {
     width: '100%',
     alignItems: 'center',
-    paddingBottom: Platform.OS === 'ios' ? 12 : 20,
+    paddingBottom: Platform.OS === 'ios' ? 6 : 8,
   },
   container: {
     position: 'absolute',

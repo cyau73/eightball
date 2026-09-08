@@ -1,29 +1,31 @@
 // styles.ts
 import { StyleSheet, Dimensions } from 'react-native';
 
-export const BALL_SIZE = Math.min(Dimensions.get('window').width * 0.92, 440);
-const PORTAL_SIZE = BALL_SIZE * 0.68;
+const { width, height } = Dimensions.get('window');
+export const BALL_SIZE = Math.min(width * 0.9, height * 0.45, 320);
+export const PORTAL_SIZE = BALL_SIZE * 0.68;
+export const DIE_SIZE = Math.round(PORTAL_SIZE * 0.96);
 
 export default StyleSheet.create({
     outerContainer: {
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
-        width: BALL_SIZE * 1.6,
-        height: BALL_SIZE * 1.6,
+        width: BALL_SIZE,
+        height: BALL_SIZE,
         alignSelf: 'center',
     },
 
     // --- THE NEW Dedicated Glow Layer ---
     haloLayer: {
         position: 'absolute',
-        width: BALL_SIZE * 1.6,
-        height: BALL_SIZE * 1.6,
+        width: BALL_SIZE * 1.4,
+        height: BALL_SIZE * 1.4,
         top: '50%',
         left: '50%',
         transform: [
-            { translateX: -(BALL_SIZE * 1.6) / 2 },
-            { translateY: -(BALL_SIZE * 1.6) / 2 }
+            { translateX: -(BALL_SIZE * 1.4) / 2 },
+            { translateY: -(BALL_SIZE * 1.4) / 2 }
         ],
         zIndex: 1,
     },
