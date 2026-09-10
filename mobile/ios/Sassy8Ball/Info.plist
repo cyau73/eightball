@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Sassy 8-Ball</string>
+    <string>Sassy Eightball</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -52,7 +52,7 @@
       <true/>
     </dict>
     <key>NSMotionUsageDescription</key>
-    <string>We use the accelerometer to detect when you shake the 8-ball to reveal your sassy fortune.</string>
+    <string>We use the accelerometer to detect when you shake the Eightball to reveal your sassy fortune.</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>

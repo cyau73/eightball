@@ -19,10 +19,10 @@ export const WebSEOContent: React.FC = () => {
                             <Text style={styles.tagBadgeText}>THE DIGITAL ORACLE FOR MODERN DILEMMAS</Text>
                         </View>
                         <Text style={styles.mainHeading}>
-                            Sassy Magic 8-Ball: Honest, Witty, &amp; Unfiltered Fortunes
+                            Sassy Magic Eightball: Honest, Witty, &amp; Unfiltered Fortunes
                         </Text>
                         <Text style={styles.leadParagraph}>
-                            Welcome to the web&apos;s favorite sarcastic oracle. Whether you are agonizing over whether to text your ex at 2:00 AM, wondering if you should buy that overpriced iced latte, or contemplating quitting your job to become an artisanal mushroom forager, the Sassy Magic 8-Ball delivers the reality check you desperately need.
+                            Welcome to the web&apos;s favorite sarcastic oracle. Whether you are agonizing over whether to text your ex at 2:00 AM, wondering if you should buy that overpriced iced latte, or contemplating quitting your job to become an artisanal mushroom forager, the Sassy Magic Eightball delivers the reality check you desperately need.
                         </Text>
                     </View>
 
@@ -53,7 +53,7 @@ export const WebSEOContent: React.FC = () => {
 
                     {/* SECTION 1: HOW TO CONSULT THE ORACLE */}
                     <View style={styles.articleSection}>
-                        <Text style={styles.sectionHeading}>How to Ask the Sassy Magic 8-Ball</Text>
+                        <Text style={styles.sectionHeading}>How to Ask the Sassy Magic Eightball</Text>
                         <Text style={styles.paragraph}>
                             Consulting the oracle is simple, but achieving maximum comedic truth requires following a few sacred principles:
                         </Text>
@@ -66,7 +66,7 @@ export const WebSEOContent: React.FC = () => {
                                 <View style={styles.stepContent}>
                                     <Text style={styles.stepTitle}>Formulate a Closed (Yes/No) Question</Text>
                                     <Text style={styles.stepDesc}>
-                                        The Magic 8-Ball thrives on polarity. Ask questions like &quot;Will my presentation go well?&quot; or &quot;Should I eat this leftover pizza?&quot; rather than open-ended queries like &quot;What is the meaning of life?&quot;
+                                        The Magic Eightball thrives on polarity. Ask questions like &quot;Will my presentation go well?&quot; or &quot;Should I eat this leftover pizza?&quot; rather than open-ended queries like &quot;What is the meaning of life?&quot;
                                     </Text>
                                 </View>
                             </View>
@@ -88,7 +88,7 @@ export const WebSEOContent: React.FC = () => {
                                     <Text style={styles.stepNumberText}>3</Text>
                                 </View>
                                 <View style={styles.stepContent}>
-                                    <Text style={styles.stepTitle}>Shake or Swipe the 8-Ball</Text>
+                                    <Text style={styles.stepTitle}>Shake or Swipe the Eightball</Text>
                                     <Text style={styles.stepDesc}>
                                         On mobile web and smartphones, shake your device or fling the ball with your finger. On desktop computers, click and drag across the ball or click the &quot;Shake or Swipe&quot; button.
                                     </Text>
@@ -113,7 +113,7 @@ export const WebSEOContent: React.FC = () => {
                     <View style={styles.articleSection}>
                         <Text style={styles.sectionHeading}>Explore the Three Levels of Attitude</Text>
                         <Text style={styles.paragraph}>
-                            Not everyone can handle a full roast before their morning espresso. That is why the Sassy Magic 8-Ball provides three distinct comedic registers:
+                            Not everyone can handle a full roast before their morning espresso. That is why the Sassy Magic Eightball provides three distinct comedic registers:
                         </Text>
 
                         <View style={styles.tierContainer}>
@@ -163,9 +163,9 @@ export const WebSEOContent: React.FC = () => {
 
                     {/* SECTION 3: THE HISTORY & SCIENCE */}
                     <View style={styles.articleSection}>
-                        <Text style={styles.sectionHeading}>The History of the Magic 8-Ball: From 1944 to Now</Text>
+                        <Text style={styles.sectionHeading}>The History of the Magic Eightball: From 1944 to Now</Text>
                         <Text style={styles.paragraph}>
-                            The iconic Magic 8-Ball has a rich, eccentric heritage stretching back over eighty years. The story began in 1944 when inventor Albert C. Carter, inspired by a spirit writing slate used by his clairvoyant mother Mary, patented a cylindrical fortune-telling device known as the &quot;Syco-Seer.&quot;
+                            The iconic Magic Eightball has a rich, eccentric heritage stretching back over eighty years. The story began in 1944 when inventor Albert C. Carter, inspired by a spirit writing slate used by his clairvoyant mother Mary, patented a cylindrical fortune-telling device known as the &quot;Syco-Seer.&quot;
                         </Text>
                         <Text style={styles.paragraph}>
                             Following Carter&apos;s passing, Chicago craftsman Abe Bookman teamed up with Carter&apos;s brother-in-law to refine the design. Initially packaged inside an ornate crystal-ball housing, the device was later repurposed in 1950 when Brunswick Billiards commissioned a promotional version shaped like an oversized black billiard eight ball.
@@ -174,7 +174,7 @@ export const WebSEOContent: React.FC = () => {
                             Inside the original physical toy, a hollow plastic icosahedron (a 20-sided die) floats freely in dark blue liquid (composed of water, blue dye, and anhydrous alcohol) within a cylindrical reservoir. When shaken, the die settles against a clear glass window on the bottom of the ball, revealing one of twenty standard responses.
                         </Text>
                         <Text style={styles.paragraph}>
-                            Our digital Sassy Magic 8-Ball preserves the satisfying physics and floating die geometry of the vintage classic, while replacing the 1950s polite corporate vocabulary with sharp, modern humor and deterministic cryptographic randomness.
+                            Our digital Sassy Magic Eightball preserves the satisfying physics and floating die geometry of the vintage classic, while replacing the 1950s polite corporate vocabulary with sharp, modern humor and deterministic cryptographic randomness.
                         </Text>
                     </View>
 
@@ -190,19 +190,19 @@ export const WebSEOContent: React.FC = () => {
                         <View style={styles.calloutBox}>
                             <Text style={styles.calloutTitle}>💡 The Visceral Truth Test</Text>
                             <Text style={styles.calloutBody}>
-                                If the Sassy 8-Ball tells you &quot;Not in a million years, bestie,&quot; and you feel a wave of disappointment, you instantly know that your heart truly wanted a &quot;Yes.&quot; If you feel a wave of relief, your intuition was warning you to walk away. The sassy oracle doesn&apos;t just predict your future—it reflects your hidden desires.
+                                If the Sassy Eightball tells you &quot;Not in a million years, bestie,&quot; and you feel a wave of disappointment, you instantly know that your heart truly wanted a &quot;Yes.&quot; If you feel a wave of relief, your intuition was warning you to walk away. The sassy oracle doesn&apos;t just predict your future—it reflects your hidden desires.
                             </Text>
                         </View>
                     </View>
 
                     {/* SECTION 5: CLASSIC VS SASSY COMPARISON */}
                     <View style={styles.articleSection}>
-                        <Text style={styles.sectionHeading}>Classic 8-Ball vs. Sassy 8-Ball: Side-by-Side</Text>
+                        <Text style={styles.sectionHeading}>Classic Eightball vs. Sassy Eightball: Side-by-Side</Text>
                         <View style={styles.tableWrapper}>
                             <View style={styles.tableRowHeader}>
                                 <Text style={[styles.tableCell, styles.tableHeaderCell, { flex: 1.2 }]}>Scenario / Sentiment</Text>
                                 <Text style={[styles.tableCell, styles.tableHeaderCell, { flex: 1.5 }]}>Boring Classic Answer</Text>
-                                <Text style={[styles.tableCell, styles.tableHeaderCell, { flex: 2 }]}>Sassy 8-Ball Upgrade</Text>
+                                <Text style={[styles.tableCell, styles.tableHeaderCell, { flex: 2 }]}>Sassy Eightball Upgrade</Text>
                             </View>
                             <View style={styles.tableRow}>
                                 <Text style={[styles.tableCell, styles.tableSentiment, { flex: 1.2 }]}>Strong Affirmation</Text>
@@ -233,9 +233,9 @@ export const WebSEOContent: React.FC = () => {
 
                         <View style={styles.faqList}>
                             <View style={styles.faqItem}>
-                                <Text style={styles.faqQuestion}>Q: How does the Sassy Magic 8-Ball work?</Text>
+                                <Text style={styles.faqQuestion}>Q: How does the Sassy Magic Eightball work?</Text>
                                 <Text style={styles.faqAnswer}>
-                                    The 8-Ball uses a client-side and serverless hybrid architecture. On every draw, your unique installation seed is hashed together with an incremental nonce using the Mulberry32 deterministic random number generator. This pulls from an extensive database of witty fortunes while ensuring that you never get the exact same sequence twice in a row.
+                                    The Eightball uses a client-side and serverless hybrid architecture. On every draw, your unique installation seed is hashed together with an incremental nonce using the Mulberry32 deterministic random number generator. This pulls from an extensive database of witty fortunes while ensuring that you never get the exact same sequence twice in a row.
                                 </Text>
                             </View>
 
@@ -247,7 +247,7 @@ export const WebSEOContent: React.FC = () => {
                             </View>
 
                             <View style={styles.faqItem}>
-                                <Text style={styles.faqQuestion}>Q: Is the Sassy Magic 8-Ball free to play?</Text>
+                                <Text style={styles.faqQuestion}>Q: Is the Sassy Magic Eightball free to play?</Text>
                                 <Text style={styles.faqAnswer}>
                                     100% free forever. There are no subscriptions, microtransactions, or paywalled fortunes. We support server and maintenance costs through non-intrusive banner and auto advertisements via Google AdSense.
                                 </Text>
@@ -273,7 +273,7 @@ export const WebSEOContent: React.FC = () => {
                     <View style={styles.ctaBox}>
                         <Text style={styles.ctaHeading}>Ready for Your Sassy Revelation?</Text>
                         <Text style={styles.ctaBody}>
-                            Scroll back up to the top, focus on your dilemma, and spin the 8-Ball. Don&apos;t say we didn&apos;t warn you!
+                            Scroll back up to the top, focus on your dilemma, and spin the Eightball. Don&apos;t say we didn&apos;t warn you!
                         </Text>
                         <View style={styles.ctaLinks}>
                             <Link href="/about" style={styles.ctaBtn}>

@@ -36,7 +36,7 @@ export const Controls: React.FC<ControlsProps> = ({
         {isLoading ? (
           <ActivityIndicator color="#ffffff" size="small" />
         ) : (
-          <Text style={styles.shakeButtonText}>✨ SHAKE OR SWIPE 8-BALL</Text>
+          <Text style={styles.shakeButtonText}>✨ SHAKE OR SWIPE EIGHTBALL</Text>
         )}
       </TouchableOpacity>
 

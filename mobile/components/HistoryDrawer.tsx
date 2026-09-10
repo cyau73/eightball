@@ -50,7 +50,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
           {history.length === 0 ? (
             <View style={styles.emptyState}>
               <Text style={styles.emptyText}>No sassy fortunes recorded yet.</Text>
-              <Text style={styles.emptySubtext}>Shake or swipe the 8-ball to begin!</Text>
+              <Text style={styles.emptySubtext}>Shake or swipe the Eightball to begin!</Text>
             </View>
           ) : (
             <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>
@@ -69,8 +69,8 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                               item.intensity === 'SAVAGE'
                                 ? 'rgba(244, 63, 94, 0.15)'
                                 : item.intensity === 'SPICY'
-                                ? 'rgba(236, 72, 153, 0.15)'
-                                : 'rgba(56, 189, 248, 0.15)',
+                                  ? 'rgba(236, 72, 153, 0.15)'
+                                  : 'rgba(56, 189, 248, 0.15)',
                           },
                         ]}
                       >
@@ -82,8 +82,8 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                                 item.intensity === 'SAVAGE'
                                   ? '#f43f5e'
                                   : item.intensity === 'SPICY'
-                                  ? '#ec4899'
-                                  : '#38bdf8',
+                                    ? '#ec4899'
+                                    : '#38bdf8',
                             },
                           ]}
                         >

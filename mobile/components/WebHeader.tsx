@@ -19,7 +19,7 @@ export const WebHeader: React.FC = () => {
                         <View style={styles.logoGroup}>
                             <Text style={styles.logoEmoji}>🔮</Text>
                             <View>
-                                <Text style={styles.logoTitle}>SASSY 8-BALL</Text>
+                                <Text style={styles.logoTitle}>SASSY EIGHTBALL</Text>
                                 <Text style={styles.logoSubtitle}>Digital Oracle &amp; Fortune Teller</Text>
                             </View>
                         </View>

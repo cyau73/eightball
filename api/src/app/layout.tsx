@@ -4,8 +4,8 @@ import { headers } from "next/headers";
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Sassy Magic 8-Ball API',
-  description: 'Serverless API & PostgreSQL Database for Sassy Magic 8-Ball Mobile App',
+  title: 'Sassy Magic Eightball API',
+  description: 'Serverless API & PostgreSQL Database for Sassy Magic EightBall Mobile App',
 };
 
 export default async function RootLayout({

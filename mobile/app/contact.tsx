@@ -43,7 +43,7 @@ export default function ContactScreen() {
                                 <Text style={styles.channelDesc}>
                                     For technical assistance, bug reports, and general feedback.
                                 </Text>
-                                <Text style={styles.channelEmail}>christopheryaukm@gmail.com</Text>
+                                <Text style={styles.channelEmail}>support@sassy-eightball.vercel.app</Text>
                             </View>
 
                             <View style={styles.channelCard}>
@@ -52,7 +52,7 @@ export default function ContactScreen() {
                                 <Text style={styles.channelDesc}>
                                     Got a savage one-liner or witty reply? Pitch it to our editorial team!
                                 </Text>
-                                <Text style={styles.channelEmail}>christopheryaukm@gmail.com</Text>
+                                <Text style={styles.channelEmail}>fortunes@sassy-eightball.vercel.app</Text>
                             </View>
 
                             <View style={styles.channelCard}>
@@ -61,7 +61,7 @@ export default function ContactScreen() {
                                 <Text style={styles.channelDesc}>
                                     For publisher inquiries, ad policy questions, and commercial partnerships.
                                 </Text>
-                                <Text style={styles.channelEmail}>christopheryaukm@gmail.com</Text>
+                                <Text style={styles.channelEmail}>advertising@sassy-eightball.vercel.app</Text>
                             </View>
                         </View>
 

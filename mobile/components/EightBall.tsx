@@ -146,7 +146,7 @@ export const EightBall: React.FC<EightBallProps> = ({
       {/* --- NATIVE GLOW HALO (Pure View with shadow/elevation) --- */}
       <View style={nativeStyles.haloLayer} pointerEvents="none" />
 
-      {/* --- Main Outer 8-Ball Sphere --- */}
+      {/* --- Main Outer Eightball Sphere --- */}
       <Animated.View
         {...panResponder.panHandlers}
         style={[

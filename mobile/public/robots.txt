@@ -1,4 +1,4 @@
-# robots.txt for Sassy Magic 8-Ball
+# robots.txt for Sassy Magic Eightball
 User-agent: *
 Allow: /
 Disallow: /_expo/
@@ -17,4 +17,4 @@ User-agent: Googlebot-Image
 Allow: /
 
 # Sitemap location
-Sitemap: https://sassy-8ball.vercel.app/sitemap.xml
+Sitemap: https://sassy-eightball.vercel.app/sitemap.xml

@@ -7,11 +7,11 @@ export default function Root({ children }: { children: React.ReactNode }) {
         '@graph': [
             {
                 '@type': 'WebApplication',
-                '@id': 'https://sassy-8ball.vercel.app/#webapp',
-                name: 'Sassy Magic 8-Ball',
-                url: 'https://sassy-8ball.vercel.app',
+                '@id': 'https://sassy-eightball.vercel.app/#webapp',
+                name: 'Sassy Magic Eightball',
+                url: 'https://sassy-eightball.vercel.app',
                 description:
-                    'An interactive, witty, and savage digital Magic 8-Ball that delivers hilarious fortunes with customizable sass levels (Mild, Spicy, Savage). Powered by deterministic entropy.',
+                    'An interactive, witty, and savage digital Magic Eightball that delivers hilarious fortunes with customizable sass levels (Mild, Spicy, Savage). Powered by deterministic entropy.',
                 applicationCategory: 'EntertainmentApplication',
                 operatingSystem: 'Web, iOS, Android',
                 browserRequirements: 'Requires JavaScript. Works on all modern browsers.',
@@ -22,19 +22,19 @@ export default function Root({ children }: { children: React.ReactNode }) {
                 },
                 creator: {
                     '@type': 'Organization',
-                    name: 'Sassy 8-Ball Studio',
+                    name: 'Sassy Eightball Studio',
                 },
             },
             {
                 '@type': 'FAQPage',
-                '@id': 'https://sassy-8ball.vercel.app/#faq',
+                '@id': 'https://sassy-eightball.vercel.app/#faq',
                 mainEntity: [
                     {
                         '@type': 'Question',
-                        name: 'What is the Sassy Magic 8-Ball?',
+                        name: 'What is the Sassy Magic Eightball?',
                         acceptedAnswer: {
                             '@type': 'Answer',
-                            text: 'The Sassy Magic 8-Ball is a modern, comedic twist on the classic 1950s fortune-telling toy. Instead of generic answers, it delivers witty, sassy, and brutally honest responses tailored to your chosen sass intensity (Mild, Spicy, or Savage).',
+                            text: 'The Sassy Magic Eightball is a modern, comedic twist on the classic 1950s fortune-telling toy. Instead of generic answers, it delivers witty, sassy, and brutally honest responses tailored to your chosen sass intensity (Mild, Spicy, or Savage).',
                         },
                     },
                     {
@@ -47,7 +47,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
                     },
                     {
                         '@type': 'Question',
-                        name: 'How do I ask the 8-ball a question on web vs mobile?',
+                        name: 'How do I ask the Eightball a question on web vs mobile?',
                         acceptedAnswer: {
                             '@type': 'Answer',
                             text: 'On mobile devices, you can physically shake your phone or swipe the 3D ball. On desktop web, you can click and drag to spin the ball or press the Shake button.',
@@ -74,40 +74,40 @@ export default function Root({ children }: { children: React.ReactNode }) {
                 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
 
                 {/* Primary SEO Meta Tags */}
-                <title>Sassy Magic 8-Ball | Online Oracle, Savage Fortunes & Daily Answers</title>
+                <title>Sassy Magic Eightball | Online Oracle, Savage Fortunes & Daily Answers</title>
                 <meta
                     name="description"
-                    content="Ask the Sassy Magic 8-Ball your deepest life questions and receive hilarious, witty, and savage fortunes. Choose between Mild, Spicy, and Savage modes. Free online oracle."
+                    content="Ask the Sassy Magic Eightball your deepest life questions and receive hilarious, witty, and savage fortunes. Choose between Mild, Spicy, and Savage modes. Free online oracle."
                 />
                 <meta
                     name="keywords"
-                    content="magic 8-ball, sassy eight ball, magic eight ball online, funny fortune teller, oracle, decision maker, savage 8 ball, yes or no oracle, funny advice"
+                    content="magic eightball, sassy eightball, magic eightball online, funny fortune teller, oracle, decision maker, savage 8ball, yes or no oracle, funny advice"
                 />
-                <meta name="author" content="Sassy 8-Ball" />
+                <meta name="author" content="Sassy Eightball" />
                 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
                 <meta name="theme-color" content="#0a0b10" />
-                <link rel="canonical" href="https://sassy-8ball.vercel.app/" />
+                <link rel="canonical" href="https://sassy-eightball.vercel.app/" />
 
                 {/* Open Graph / Facebook */}
                 <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://sassy-8ball.vercel.app/" />
-                <meta property="og:site_name" content="Sassy Magic 8-Ball" />
-                <meta property="og:title" content="Sassy Magic 8-Ball | Online Oracle, Savage Fortunes & Daily Answers" />
+                <meta property="og:url" content="https://sassy-eightball.vercel.app/" />
+                <meta property="og:site_name" content="Sassy Magic Eightball" />
+                <meta property="og:title" content="Sassy Magic Eightball | Online Oracle, Savage Fortunes & Daily Answers" />
                 <meta
                     property="og:description"
-                    content="Ask the Sassy Magic 8-Ball your deepest life questions and receive hilarious, witty, and savage fortunes. Choose Mild, Spicy, or Savage."
+                    content="Ask the Sassy Magic Eightball your deepest life questions and receive hilarious, witty, and savage fortunes. Choose Mild, Spicy, or Savage."
                 />
-                <meta property="og:image" content="https://sassy-8ball.vercel.app/assets/icon.png" />
+                <meta property="og:image" content="https://sassy-eightball.vercel.app/assets/icon.png" />
 
                 {/* Twitter */}
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:url" content="https://sassy-8ball.vercel.app/" />
-                <meta name="twitter:title" content="Sassy Magic 8-Ball | Online Oracle & Savage Answers" />
+                <meta name="twitter:url" content="https://sassy-eightball.vercel.app/" />
+                <meta name="twitter:title" content="Sassy Magic Eightball | Online Oracle & Savage Answers" />
                 <meta
                     name="twitter:description"
-                    content="Ask the Sassy Magic 8-Ball your deepest life questions and receive hilarious, witty, and savage fortunes."
+                    content="Ask the Sassy Magic Eightball your deepest life questions and receive hilarious, witty, and savage fortunes."
                 />
-                <meta name="twitter:image" content="https://sassy-8ball.vercel.app/assets/icon.png" />
+                <meta name="twitter:image" content="https://sassy-eightball.vercel.app/assets/icon.png" />
 
                 {/* Google AdSense Verification & Auto-Ads */}
                 <script

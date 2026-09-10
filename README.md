@@ -1,6 +1,6 @@
-# 🔮 Sassy Magic 8-Ball (iOS, Android & Vercel API)
+# 🔮 Sassy Magic Eightball (iOS, Android & Vercel API)
 
-A cross-platform mobile application that delivers hilarious, witty, and savage fortunes when the user **shakes** their device (using the hardware accelerometer) or **spins/swipes** the 8-Ball with their finger.
+A cross-platform mobile application that delivers hilarious, witty, and savage fortunes when the user **shakes** their device (using the hardware accelerometer) or **spins/swipes** the EightBall with their finger.
 
 Powered by a **PostgreSQL database** and serverless API deployed on **Vercel**, with persistent unique installation seeding per user.
 
@@ -68,7 +68,7 @@ npm run web
 ## 🎲 Features
 
 1. **Hardware Shake Detection**: Real-time accelerometer processing to detect physical device shaking with debounce filtering.
-2. **Touch Spin & Gesture Physics**: Drag and fling the 3D-styled 8-Ball with your finger to trigger a fluid swirl animation.
+2. **Touch Spin & Gesture Physics**: Drag and fling the 3D-styled EightBall with your finger to trigger a fluid swirl animation.
 3. **Persistent Random Seeding**: On initial install, each device generates a unique cryptographic seed (`seed_usr_xxxx`) stored persistently in `AsyncStorage`.
 4. **Sass Intensity Levels**: Choose between `Mild`, `Spicy`, and `Savage` sass modes.
 5. **Offline Resilient**: If offline or DB is spinning up, the client seamlessly falls back to the embedded fortune engine.

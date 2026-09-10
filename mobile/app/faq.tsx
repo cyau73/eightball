@@ -8,24 +8,24 @@ import { Link } from 'expo-router';
 export default function FAQScreen() {
     const faqs = [
         {
-            q: 'How does the Sassy Magic 8-Ball work?',
-            a: 'The Sassy Magic 8-Ball combines a physics-inspired 3D digital die simulation with a deterministic pseudorandom entropy engine. When you shake your device or click the button, our Mulberry32 algorithm calculates a pseudo-random index based on your unique installation seed and draw count, delivering a sharp, witty fortune matching your chosen sass intensity.',
+            q: 'How does the Sassy Magic Eightball work?',
+            a: 'The Sassy Magic Eightball combines a physics-inspired 3D digital die simulation with a deterministic pseudorandom entropy engine. When you shake your device or click the button, our Mulberry32 algorithm calculates a pseudo-random index based on your unique installation seed and draw count, delivering a sharp, witty fortune matching your chosen sass intensity.',
         },
         {
             q: 'What is the difference between Mild, Spicy, and Savage modes?',
             a: 'Mild mode is warm, validating, and encouraging (ideal when you need a gentle confidence boost). Spicy mode introduces sharp sarcasm, playful teasing, and realistic best-friend banter. Savage mode is completely unfiltered, featuring brutal roasts, wake-up calls, and hilarious reality checks.',
         },
         {
-            q: 'How do I shake the 8-Ball on mobile vs desktop computers?',
-            a: 'On mobile smartphones and tablets (iOS and Android), you can physically shake your device to trigger the accelerometer, or fling the 8-ball with your fingertip. On desktop web browsers, you can click and drag across the ball with your mouse or click the "Shake or Swipe 8-Ball" button.',
+            q: 'How do I shake the Eightball on mobile vs desktop computers?',
+            a: 'On mobile smartphones and tablets (iOS and Android), you can physically shake your device to trigger the accelerometer, or fling the eightball with your fingertip. On desktop web browsers, you can click and drag across the ball with your mouse or click the "Shake or Swipe Eightball" button.',
         },
         {
             q: 'Are the fortunes truly random?',
             a: 'Yes. Every device receives an individual 128-bit cryptographic seed upon initial install. Every time you ask a question, the draw count increments and generates a new deterministic hash. This ensures that answers are genuinely unpredictable while preventing duplicate repetitions.',
         },
         {
-            q: 'Does the 8-Ball listen to or store my questions?',
-            a: 'Never. You do not even need to type your question out loud if you prefer not to. The Sassy Magic 8-Ball has zero access to your microphone, camera, or personal messages. Your dilemmas remain 100% private to you.',
+            q: 'Does the Eightball listen to or store my questions?',
+            a: 'Never. You do not even need to type your question out loud if you prefer not to. The Sassy Magic Eightball has zero access to your microphone, camera, or personal messages. Your dilemmas remain 100% private to you.',
         },
         {
             q: 'Can I play when I am offline or on airplane mode?',
@@ -33,11 +33,11 @@ export default function FAQScreen() {
         },
         {
             q: 'What if a Savage fortune roasts me too hard?',
-            a: 'Remember that the Sassy 8-Ball is an inanimate piece of code designed for laughs! If Savage mode is hitting a little too close to home, switch down to Mild mode for some comforting affirmations, drink a glass of water, and remember you are doing great.',
+            a: 'Remember that the Sassy Eightball is an inanimate piece of code designed for laughs! If Savage mode is hitting a little too close to home, switch down to Mild mode for some comforting affirmations, drink a glass of water, and remember you are doing great.',
         },
         {
             q: 'Why do you display advertisements on the website?',
-            a: 'The Sassy Magic 8-Ball is free for everyone worldwide. Displaying advertisements through Google AdSense helps us offset our hosting, domain registration, serverless compute, and database costs without requiring paid subscriptions or paywalls.',
+            a: 'The Sassy Magic Eightball is free for everyone worldwide. Displaying advertisements through Google AdSense helps us offset our hosting, domain registration, serverless compute, and database costs without requiring paid subscriptions or paywalls.',
         },
         {
             q: 'Can I suggest new sassy fortunes or roasts?',
@@ -62,7 +62,7 @@ export default function FAQScreen() {
                         <Text style={styles.subtitle}>Everything You Wanted to Know About the Sassy Oracle</Text>
 
                         <Text style={styles.lead}>
-                            Got questions about how the 8-Ball works, how our randomness algorithm functions, or why you just got roasted about your life choices? Find all the answers right here.
+                            Got questions about how the Eightball works, how our randomness algorithm functions, or why you just got roasted about your life choices? Find all the answers right here.
                         </Text>
 
                         <View style={styles.faqContainer}>

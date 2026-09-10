@@ -4,7 +4,7 @@ import { SASSY_FORTUNES } from './seed-data';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🔮 Seeding Sassy 8-Ball fortunes into PostgreSQL...');
+  console.log('🔮 Seeding Sassy Eightball fortunes into PostgreSQL...');
 
   let createdCount = 0;
   for (const item of SASSY_FORTUNES) {

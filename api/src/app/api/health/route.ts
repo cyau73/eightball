@@ -20,7 +20,7 @@ export async function GET() {
 
   return NextResponse.json({
     status: 'ok',
-    app: 'Sassy Magic 8-Ball API',
+    app: 'Sassy Magic Eightball API',
     database: {
       status: dbStatus,
       isConfigured: isDatabaseConfigured(),

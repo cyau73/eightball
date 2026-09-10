@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Sassy 8-Ball",
+    "name": "Sassy Eightball",
     "slug": "sassy-eightball",
     "version": "1.0.0",
     "newArchEnabled": true,
@@ -35,7 +35,7 @@
       "bundleIdentifier": "com.sassy.eightball",
       "infoPlist": {
         "UIBackgroundModes": [],
-        "NSMotionUsageDescription": "We use the accelerometer to detect when you shake the 8-ball to reveal your sassy fortune.",
+        "NSMotionUsageDescription": "We use the accelerometer to detect when you shake the eightball to reveal your sassy fortune.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },

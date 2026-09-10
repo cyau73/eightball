@@ -19,11 +19,11 @@ export default function AboutScreen() {
                             <Text style={styles.breadcrumbCurrent}>About</Text>
                         </View>
 
-                        <Text style={styles.title}>About Sassy Magic 8-Ball</Text>
+                        <Text style={styles.title}>About Sassy Magic Eightball</Text>
                         <Text style={styles.subtitle}>Where Vintage Divination Meets Unfiltered Comedy</Text>
 
                         <Text style={styles.lead}>
-                            The Sassy Magic 8-Ball was created with one simple conviction: polite, non-committal answers like &quot;Reply hazy, try again&quot; are completely useless in the 21st century. When you face an everyday dilemma, you deserve a witty, sarcastic, and brutally honest answer.
+                            The Sassy Magic Eightball was created with one simple conviction: polite, non-committal answers like &quot;Reply hazy, try again&quot; are completely useless in the 21st century. When you face an everyday dilemma, you deserve a witty, sarcastic, and brutally honest answer.
                         </Text>
 
                         {/* SECTION: OUR MISSION */}
@@ -33,7 +33,7 @@ export default function AboutScreen() {
                                 Modern life bombards us with thousands of choices every day. From minor dilemmas (&quot;Should I buy another pair of identical black sneakers?&quot;) to dramatic existential questions (&quot;Should I text someone who has clearly ghosted me?&quot;), overthinking causes paralyzing indecision.
                             </Text>
                             <Text style={styles.paragraph}>
-                                We built the Sassy Magic 8-Ball to shatter that paralysis through comedic shock value. When the oracle delivers a savage roast, it triggers what psychologists refer to as the &quot;visceral reality test.&quot; You instantly realize whether you agree with the prediction or wish to defy it. Either way, you get immediate clarity—and a good laugh.
+                                We built the Sassy Magic Eightball to shatter that paralysis through comedic shock value. When the oracle delivers a savage roast, it triggers what psychologists refer to as the &quot;visceral reality test.&quot; You instantly realize whether you agree with the prediction or wish to defy it. Either way, you get immediate clarity—and a good laugh.
                             </Text>
                         </View>
 
@@ -75,7 +75,7 @@ export default function AboutScreen() {
                         <View style={styles.section}>
                             <Text style={styles.h2}>The Technology Under the Hood</Text>
                             <Text style={styles.paragraph}>
-                                While the interface looks deceptively playful, the technology backing the Sassy Magic 8-Ball was engineered with state-of-the-art web and mobile architectures:
+                                While the interface looks deceptively playful, the technology backing the Sassy Magic Eightball was engineered with state-of-the-art web and mobile architectures:
                             </Text>
                             <Text style={styles.bulletItem}>
                                 &bull; <Text style={styles.bold}>Universal Cross-Platform Codebase:</Text> Built with React Native and Expo SDK 54, rendering pixel-perfect experiences across iOS, Android, mobile web, and desktop browsers.
@@ -102,9 +102,9 @@ export default function AboutScreen() {
                         {/* CTA */}
                         <View style={styles.ctaBox}>
                             <Text style={styles.ctaTitle}>Ready to Test the Oracle?</Text>
-                            <Text style={styles.ctaText}>Head over to the interactive 8-Ball and ask your first question.</Text>
+                            <Text style={styles.ctaText}>Head over to the interactive eightball and ask your first question.</Text>
                             <Link href="/" style={styles.ctaButton}>
-                                <Text style={styles.ctaButtonText}>Consult the Sassy 8-Ball &rarr;</Text>
+                                <Text style={styles.ctaButtonText}>Consult the Sassy Eightball &rarr;</Text>
                             </Link>
                         </View>
 

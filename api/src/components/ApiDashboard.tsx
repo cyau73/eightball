@@ -10,7 +10,7 @@ interface ApiLandingPageProps {
 
 export default function ApiLandingPage({ userEmail }: ApiLandingPageProps) {
   const [activeTab, setActiveTab] = useState<'tester' | 'catalog' | 'docs'>('catalog');
-  const [fortune, setFortune] = useState<string>('Ask the sassy 8-ball anything...');
+  const [fortune, setFortune] = useState<string>('Ask the sassy eightball anything...');
   const [metadata, setMetadata] = useState<any>(null);
   const [intensity, setIntensity] = useState<'ALL' | 'MILD' | 'SPICY' | 'SAVAGE'>('SAVAGE');
   const [seed, setSeed] = useState<string>('demo_user');
@@ -150,7 +150,7 @@ export default function ApiLandingPage({ userEmail }: ApiLandingPageProps) {
             letterSpacing: '0.5px',
           }}
         >
-          🔮 SASSY 8-BALL DASHBOARD & API
+          🔮 SASSY EightBall DASHBOARD & API
         </div>
 
         <h1
@@ -453,7 +453,7 @@ export default function ApiLandingPage({ userEmail }: ApiLandingPageProps) {
         </div>
       )}
 
-      {/* TAB 2: LIVE API TESTER & 8-BALL */}
+      {/* TAB 2: LIVE API TESTER & EightBALL */}
       {activeTab === 'tester' && (
         <div
           style={{

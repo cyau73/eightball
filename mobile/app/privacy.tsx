@@ -23,7 +23,7 @@ export default function PrivacyPolicyScreen() {
                         <Text style={styles.lastUpdated}>Last Updated: September 10, 2026</Text>
 
                         <Text style={styles.lead}>
-                            Your privacy is extremely important to us at Sassy Magic 8-Ball (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;). This Privacy Policy explains how we handle information, our use of cookies, and your rights regarding personalized advertising and data protection when you use our website and mobile applications.
+                            Your privacy is extremely important to us at Sassy Magic Eightball (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;). This Privacy Policy explains how we handle information, our use of cookies, and your rights regarding personalized advertising and data protection when you use our website and mobile applications.
                         </Text>
 
                         {/* SECTION 1 */}
@@ -50,10 +50,10 @@ export default function PrivacyPolicyScreen() {
                         <View style={styles.section}>
                             <Text style={styles.h2}>2. Information We Collect</Text>
                             <Text style={styles.paragraph}>
-                                The Sassy Magic 8-Ball is designed to be privacy-friendly by default. We do NOT require an account, sign-in, or registration to play:
+                                The Sassy Magic Eightball is designed to be privacy-friendly by default. We do NOT require an account, sign-in, or registration to play:
                             </Text>
                             <Text style={styles.bulletItem}>
-                                &bull; <Text style={styles.bold}>Your Questions:</Text> We do NOT record, intercept, or store the questions you ask the 8-Ball. Your questions exist solely in your thoughts or locally in your browser session.
+                                &bull; <Text style={styles.bold}>Your Questions:</Text> We do NOT record, intercept, or store the questions you ask the Eightball. Your questions exist solely in your thoughts or locally in your browser session.
                             </Text>
                             <Text style={styles.bulletItem}>
                                 &bull; <Text style={styles.bold}>Local Storage Data:</Text> We store a non-identifying cryptographic installation seed (e.g. `seed_usr_xxxx`), your recent fortune history (capped at 50 draws), and your audio/intensity preferences directly on your device using `AsyncStorage` / browser `localStorage`.
@@ -106,7 +106,7 @@ export default function PrivacyPolicyScreen() {
                                 If you have any inquiries, concerns, or privacy requests regarding this policy, please reach out through our <Link href="/contact" style={{ color: '#ec4899', textDecorationLine: 'underline' }}>Contact Page</Link> or email us directly at:
                             </Text>
                             <View style={styles.emailBox}>
-                                <Text style={styles.emailText}>privacy@sassy-8ball.vercel.app</Text>
+                                <Text style={styles.emailText}>privacy@sassy-eightball.vercel.app</Text>
                             </View>
                         </View>
 

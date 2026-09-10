@@ -146,7 +146,7 @@ export const EightBall: React.FC<EightBallProps> = ({
             {/* --- WEB FALLBACK: Pure React Native Glow Halo (No Skia WASM needed) --- */}
             <View style={webStyles.haloLayer} pointerEvents="none" />
 
-            {/* --- Main Outer 8-Ball Sphere --- */}
+            {/* --- Main Outer Eightball Sphere --- */}
             <Animated.View
                 {...panResponder.panHandlers}
                 style={[
