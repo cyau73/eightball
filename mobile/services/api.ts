@@ -142,3 +142,19 @@ export function getOfflineFortune(intensity: SassIntensity): FortuneResult {
     timestamp: new Date().toISOString(),
   };
 }
+
+export async function syncSeedWithServer(seedKey: string, devicePlatform: string): Promise<void> {
+  try {
+    const baseUrl = await getApiBaseUrl();
+    await fetch(`${baseUrl}/api/seed`, {
+      method: 'POST',
+      headers: {
+        'x-client-secret': API_SECRET || '',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ seedKey, devicePlatform }),
+    });
+  } catch (err) {
+    console.warn('Seed sync failed (offline or unreachable):', err);
+  }
+}

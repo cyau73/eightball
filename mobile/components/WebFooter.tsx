@@ -1,0 +1,215 @@
+// mobile/components/WebFooter.tsx
+import React from 'react';
+import { View, Text, StyleSheet, Platform } from 'react-native';
+import { Link } from 'expo-router';
+
+export const WebFooter: React.FC = () => {
+    if (Platform.OS !== 'web') {
+        return null;
+    }
+
+    return (
+        <footer style={{ width: '100%', marginTop: 'auto' }}>
+            <View style={styles.footerContainer}>
+                <View style={styles.footerInner}>
+                    {/* Top Column Grid */}
+                    <View style={styles.columnsWrapper}>
+                        {/* Col 1: Brand & Lore */}
+                        <View style={styles.brandCol}>
+                            <View style={styles.brandHeader}>
+                                <Text style={styles.brandIcon}>🎱</Text>
+                                <Text style={styles.brandTitle}>Sassy Magic 8-Ball</Text>
+                            </View>
+                            <Text style={styles.brandDesc}>
+                                The world&apos;s premier interactive comedic oracle. Generating humorous, sarcastic, and savage answers to life&apos;s most perplexing questions with cryptographic entropy.
+                            </Text>
+                            <View style={styles.badgeRow}>
+                                <View style={styles.pillBadge}>
+                                    <Text style={styles.pillBadgeText}>Mild</Text>
+                                </View>
+                                <View style={styles.pillBadge}>
+                                    <Text style={styles.pillBadgeText}>Spicy</Text>
+                                </View>
+                                <View style={styles.pillBadge}>
+                                    <Text style={styles.pillBadgeText}>Savage</Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        {/* Col 2: Navigation Links */}
+                        <View style={styles.linkCol}>
+                            <Text style={styles.colHeading}>Explore</Text>
+                            <Link href="/" style={styles.linkItem}>
+                                <Text style={styles.linkText}>Interactive 8-Ball</Text>
+                            </Link>
+                            <Link href="/about" style={styles.linkItem}>
+                                <Text style={styles.linkText}>About The Oracle</Text>
+                            </Link>
+                            <Link href="/faq" style={styles.linkItem}>
+                                <Text style={styles.linkText}>Frequently Asked Questions</Text>
+                            </Link>
+                            <Link href="/contact" style={styles.linkItem}>
+                                <Text style={styles.linkText}>Contact & Support</Text>
+                            </Link>
+                        </View>
+
+                        {/* Col 3: Legal & AdSense Policies */}
+                        <View style={styles.linkCol}>
+                            <Text style={styles.colHeading}>Trust & Legal</Text>
+                            <Link href="/privacy" style={styles.linkItem}>
+                                <Text style={styles.linkText}>Privacy Policy</Text>
+                            </Link>
+                            <Link href="/terms" style={styles.linkItem}>
+                                <Text style={styles.linkText}>Terms of Service</Text>
+                            </Link>
+                            <a href="/ads.txt" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', padding: '3px 0' }}>
+                                <Text style={styles.linkText}>ads.txt Verification</Text>
+                            </a>
+                        </View>
+                    </View>
+
+                    {/* Divider */}
+                    <View style={styles.divider} />
+
+                    {/* Disclosures Required by AdSense & Regulations */}
+                    <View style={styles.disclaimerBox}>
+                        <Text style={styles.disclaimerText}>
+                            <Text style={styles.disclaimerBold}>Advertising & Cookies Disclosure: </Text>
+                            This website uses Google AdSense and third-party advertising partners to display advertisements. Google uses cookies (including the DoubleClick DART cookie) to serve ads based on your prior visits to this and other websites. You can opt out of personalized advertising by visiting Google&apos;s Ad Settings or www.aboutads.info.
+                        </Text>
+                        <Text style={[styles.disclaimerText, { marginTop: 8 }]}>
+                            <Text style={styles.disclaimerBold}>Entertainment Novelty Disclaimer: </Text>
+                            The Sassy Magic 8-Ball is created solely for entertainment and comedic amusement. Responses are pseudorandomly generated by computer algorithms and do not constitute financial, legal, psychological, or medical advice. Always use sound judgment.
+                        </Text>
+                    </View>
+
+                    {/* Bottom copyright */}
+                    <View style={styles.bottomBar}>
+                        <Text style={styles.copyrightText}>
+                            &copy; {new Date().getFullYear()} Sassy Magic 8-Ball. All rights reserved. Made with sassy love and chaotic good vibes.
+                        </Text>
+                    </View>
+                </View>
+            </View>
+        </footer>
+    );
+};
+
+const styles = StyleSheet.create({
+    footerContainer: {
+        width: '100%',
+        backgroundColor: '#07080c',
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(255, 255, 255, 0.08)',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingTop: 48,
+        paddingBottom: 36,
+    },
+    footerInner: {
+        width: '100%',
+        maxWidth: 1100,
+    },
+    columnsWrapper: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 36,
+        justifyContent: 'space-between',
+        marginBottom: 36,
+    },
+    brandCol: {
+        flex: 2,
+        minWidth: 260,
+    },
+    brandHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        marginBottom: 12,
+    },
+    brandIcon: {
+        fontSize: 22,
+    },
+    brandTitle: {
+        fontSize: 18,
+        fontWeight: '900',
+        color: '#f8fafc',
+        letterSpacing: 0.5,
+    },
+    brandDesc: {
+        fontSize: 13,
+        color: '#94a3b8',
+        lineHeight: 20,
+        marginBottom: 16,
+    },
+    badgeRow: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    pillBadge: {
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 999,
+    },
+    pillBadgeText: {
+        fontSize: 11,
+        color: '#cbd5e1',
+        fontWeight: '600',
+    },
+    linkCol: {
+        flex: 1,
+        minWidth: 160,
+    },
+    colHeading: {
+        fontSize: 14,
+        fontWeight: '800',
+        color: '#f8fafc',
+        letterSpacing: 0.6,
+        marginBottom: 14,
+        textTransform: 'uppercase',
+    },
+    linkItem: {
+        paddingVertical: 5,
+        textDecorationLine: 'none',
+    },
+    linkText: {
+        fontSize: 13,
+        color: '#94a3b8',
+        fontWeight: '500',
+    },
+    divider: {
+        height: 1,
+        backgroundColor: 'rgba(255, 255, 255, 0.07)',
+        width: '100%',
+        marginVertical: 24,
+    },
+    disclaimerBox: {
+        backgroundColor: 'rgba(255, 255, 255, 0.02)',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 24,
+    },
+    disclaimerText: {
+        fontSize: 11,
+        color: '#64748b',
+        lineHeight: 17,
+    },
+    disclaimerBold: {
+        fontWeight: '700',
+        color: '#94a3b8',
+    },
+    bottomBar: {
+        alignItems: 'center',
+        paddingTop: 12,
+    },
+    copyrightText: {
+        fontSize: 12,
+        color: '#64748b',
+        textAlign: 'center',
+    },
+});

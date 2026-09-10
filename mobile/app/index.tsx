@@ -20,6 +20,9 @@ import { AdBanner } from '../components/AdBanner';
 import { useGoogleMobileAdsInit } from '../components/AdManager';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ConnectionLight } from '../components/ConnectionLight';
+import { WebHeader } from '../components/WebHeader';
+import { WebFooter } from '../components/WebFooter';
+import { WebSEOContent } from '../components/WebSEOContent';
 
 export default function MainEightBallScreen() {
   const { seed, totalDraws, incrementDraws, regenerateSeed } = useUserSeed();
@@ -135,6 +138,81 @@ export default function MainEightBallScreen() {
     enabled: true,
   });
 
+  // Dedicated Web Layout: Full ScrollView with WebHeader, WebSEOContent, and WebFooter
+  if (Platform.OS === 'web') {
+    return (
+      <ScrollView style={styles.webScrollScreen} contentContainerStyle={styles.webScrollContent}>
+        <WebHeader />
+
+        <main style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <View style={styles.webStageWrapper}>
+            <View style={styles.ambientGlowTop} />
+            <View style={styles.ambientGlowBottom} />
+
+            {/* Discreet connection indicator light */}
+            <ConnectionLight isOnline={isOnline} />
+
+            <View style={styles.header}>
+              <View style={styles.badgePill}>
+                <Text style={styles.badgePillText}>🔮 POWERED BY SASS</Text>
+              </View>
+              <Text style={styles.title}>MAGIC EIGHT-BALL 🎱</Text>
+            </View>
+
+            <View style={styles.webStage}>
+              <EightBall
+                fortuneText={currentFortune}
+                isRevealing={isRevealing}
+                intensity={displayedIntensity}
+                isShaking={isShaking}
+                onSpinTrigger={() => handleDrawFortune('spin')}
+              />
+            </View>
+
+            <View style={styles.controlsArea}>
+              <Controls
+                intensity={intensity}
+                onSelectIntensity={setIntensity}
+                onSimulateShake={() => handleDrawFortune('button')}
+                onOpenHistory={() => setHistoryVisible(true)}
+                onOpenSettings={() => setSettingsVisible(true)}
+                soundEnabled={soundEnabled}
+                onToggleSound={() => setSoundEnabled((prev) => !prev)}
+                isLoading={isRevealing}
+              />
+            </View>
+
+            {/* Ad banner */}
+            <View style={styles.adWrapper}>
+              <AdBanner />
+            </View>
+          </View>
+
+          {/* Substantive editorial content for SEO and AdSense compliance */}
+          <WebSEOContent />
+        </main>
+
+        <WebFooter />
+
+        <HistoryDrawer
+          visible={historyVisible}
+          history={history}
+          onClose={() => setHistoryVisible(false)}
+          onClearHistory={() => setHistory([])}
+        />
+
+        <SettingsModal
+          visible={settingsVisible}
+          seed={seed}
+          totalDraws={totalDraws}
+          onClose={() => setSettingsVisible(false)}
+          onRegenerateSeed={regenerateSeed}
+        />
+      </ScrollView>
+    );
+  }
+
+  // Native Mobile Layout (iOS & Android): Pixel-perfect single-screen experience
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.ambientGlowTop} />
@@ -148,11 +226,6 @@ export default function MainEightBallScreen() {
           <Text style={styles.badgePillText}>🔮 POWERED BY SASS</Text>
         </View>
         <Text style={styles.title}>MAGIC EIGHT-BALL 🎱</Text>
-        {/* <Text style={styles.subtitle}>
-          {Platform.OS === 'web'
-            ? 'Swipe the ball or click below for your sassy fortune'
-            : 'Shake your phone or swipe'}
-        </Text> */}
       </View>
 
       <View style={styles.stage}>
@@ -180,7 +253,7 @@ export default function MainEightBallScreen() {
 
       {/* Ad banner */}
       <View style={styles.adWrapper}>
-        <AdBanner slotId="YOUR_SLOT_ID" />
+        <AdBanner />
       </View>
 
       <HistoryDrawer
@@ -293,5 +366,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
+  },
+  webScrollScreen: {
+    flex: 1,
+    backgroundColor: '#0a0b10',
+  },
+  webScrollContent: {
+    minHeight: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  webStageWrapper: {
+    width: '100%',
+    maxWidth: 420,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 8,
+    paddingBottom: 10,
+    paddingHorizontal: 16,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  webStage: {
+    width: '100%',
+    minHeight: 270,
+    maxHeight: 320,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 4,
   },
 });

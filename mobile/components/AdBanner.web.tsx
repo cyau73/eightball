@@ -15,6 +15,8 @@ const ADSENSE_CLIENT_ID = 'ca-pub-1519113587025254';
 
 export const AdBanner: React.FC<AdBannerProps> = ({ slotId = '', format = 'auto' }) => {
   const isPushed = useRef(false);
+  // Valid AdSense slot IDs are numeric strings (e.g. "1234567890")
+  const hasValidSlot = Boolean(slotId && /^\d+$/.test(slotId) && slotId !== 'YOUR_SLOT_ID');
 
   useEffect(() => {
     // Ensure the AdSense script tag is in document.head
@@ -26,39 +28,58 @@ export const AdBanner: React.FC<AdBannerProps> = ({ slotId = '', format = 'auto'
       document.head.appendChild(script);
     }
 
-    if (isPushed.current) return;
+    if (!hasValidSlot || isPushed.current) return;
 
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
       isPushed.current = true;
     } catch (e) {
-      console.error('AdSense push error:', e);
+      console.warn('AdSense push error:', e);
     }
-  }, [slotId]);
+  }, [hasValidSlot]);
 
+  // If a valid slot ID is configured, render the manual ad unit
+  if (hasValidSlot) {
+    return (
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '728px',
+          maxHeight: '90px',
+          height: '90px',
+          margin: '8px auto',
+          textAlign: 'center',
+          overflow: 'hidden',
+          flexShrink: 0,
+          display: 'block',
+        }}
+      >
+        <ins
+          className="adsbygoogle"
+          style={{ display: 'inline-block', width: '100%', height: '90px' }}
+          data-ad-client={ADSENSE_CLIENT_ID}
+          data-ad-slot={slotId}
+          data-ad-format={format}
+          data-full-width-responsive="false"
+          data-adtest={__DEV__ ? 'on' : undefined}
+        />
+      </div>
+    );
+  }
+
+  // When no manual slot is provided (e.g., during AdSense site approval review),
+  // Google Auto-Ads dynamically discovers placement spots. We provide a clean container
+  // that avoids console errors and layout shifts.
   return (
     <div
+      className="adsense-auto-ad-container"
       style={{
         width: '100%',
         maxWidth: '728px',
-        maxHeight: '90px', // Explicitly cap height
-        height: '90px',
-        margin: '8px auto',
+        minHeight: '1px',
+        margin: '4px auto',
         textAlign: 'center',
-        overflow: 'hidden',
-        flexShrink: 0,
-        display: 'block',
       }}
-    >
-      <ins
-        className="adsbygoogle"
-        style={{ display: 'inline-block', width: '100%', height: '90px' }}
-        data-ad-client={ADSENSE_CLIENT_ID}
-        data-ad-slot={slotId || undefined}
-        data-ad-format={format}
-        data-full-width-responsive="false" // Disable vertical expanding
-        data-adtest={__DEV__ ? 'on' : undefined}
-      />
-    </div>
+    />
   );
 };

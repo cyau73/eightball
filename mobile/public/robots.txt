@@ -1,0 +1,20 @@
+# robots.txt for Sassy Magic 8-Ball
+User-agent: *
+Allow: /
+Disallow: /_expo/
+Disallow: /api/
+
+# Explicitly allow Google AdSense Crawler
+User-agent: Mediapartners-Google
+Allow: /
+
+# Explicitly allow Googlebot
+User-agent: Googlebot
+Allow: /
+
+# Explicitly allow Googlebot-Image
+User-agent: Googlebot-Image
+Allow: /
+
+# Sitemap location
+Sitemap: https://sassy-8ball.vercel.app/sitemap.xml
